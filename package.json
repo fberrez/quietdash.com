@@ -1,0 +1,32 @@
+{
+  "name": "vitrine-io",
+  "version": "1.0.0",
+  "private": true,
+  "packageManager": "pnpm@10.4.1",
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "lint": "turbo run lint",
+    "clean": "turbo run clean",
+    "type-check": "turbo run type-check",
+    "generate:api-client": "turbo run generate:openapi --filter=api && turbo run generate:client --filter=api-client"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "bcrypt",
+      "canvas",
+      "@prisma/client",
+      "@prisma/engines"
+    ]
+  },
+  "devDependencies": {
+    "turbo": "^2.3.3",
+    "typescript": "^5.7.2",
+    "prettier": "^3.4.2",
+    "eslint": "^9.16.0"
+  },
+  "engines": {
+    "node": ">=20.0.0",
+    "pnpm": ">=10.0.0"
+  }
+}

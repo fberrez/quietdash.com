@@ -1,0 +1,24 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pnpm exec prisma generate:*)",
+      "Bash(pnpm exec nest build:*)",
+      "Bash(pnpm --filter @vitrine/api exec nest info:*)",
+      "Bash(pnpm --filter @vitrine/api clean:*)",
+      "Bash(pnpm --filter @vitrine/api dev:*)",
+      "Bash(pnpm --filter @vitrine/api add:*)",
+      "Bash(cat:*)",
+      "Bash(pnpm --filter @vitrine/api start)",
+      "Bash(pnpm --filter @vitrine/api remove:*)",
+      "Bash(pnpm --filter @vitrine/api exec prisma:*)",
+      "Bash(timeout 10 pnpm:*)",
+      "Bash(curl:*)",
+      "WebFetch(domain:github.com)",
+      "Bash(chmod:*)",
+      "WebFetch(domain:raw.githubusercontent.com)"
+    ],
+    "deny": [],
+    "ask": []
+  },
+  "outputStyle": "default"
+}

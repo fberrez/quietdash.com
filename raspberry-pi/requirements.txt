@@ -1,0 +1,6 @@
+requests>=2.31.0
+Pillow>=10.0.0
+python-dotenv>=1.0.0
+spidev>=3.5
+RPi.GPIO>=0.7.0
+gpiozero>=1.6.0

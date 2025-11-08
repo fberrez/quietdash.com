@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json.schemastore.org/nest-cli",
+  "collection": "@nestjs/schematics",
+  "sourceRoot": "src",
+  "entryFile": "main",
+  "compilerOptions": {
+    "deleteOutDir": true,
+    "webpack": false,
+    "assets": [
+      {
+        "include": "wrapper.js",
+        "outDir": "../..",
+        "watchAssets": true
+      }
+    ]
+  }
+}
