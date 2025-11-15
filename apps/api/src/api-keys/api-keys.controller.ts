@@ -19,7 +19,7 @@ import { CreateApiKeyDto } from './dto/create-api-key.dto';
 import { UpdateApiKeyDto } from './dto/update-api-key.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
-import { UserSafe, ApiKeySafe } from '@vitrine/shared';
+import { UserSafe, ApiKeySafe } from '@quietdash/shared';
 
 @ApiTags('API Keys')
 @Controller('api-keys')

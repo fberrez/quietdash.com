@@ -35,7 +35,9 @@
       "WebFetch(domain:usetrmnl.com)",
       "WebFetch(domain:shadcnstudio.com)",
       "WebSearch",
-      "Bash(npx tailwindcss:*)"
+      "Bash(npx tailwindcss:*)",
+      "Bash(find:*)",
+      "Bash(xargs sed:*)"
     ],
     "deny": [],
     "ask": []

@@ -9,7 +9,7 @@ const footerLinks = {
   ],
   developers: [
     { label: 'Documentation', href: '#' },
-    { label: 'GitHub', href: 'https://github.com/fberrez/vitrine.io' },
+    { label: 'GitHub', href: 'https://github.com/fberrez/quietdash.com' },
     { label: 'API Reference', href: '#' },
     { label: 'Widget Gallery', href: '#' },
   ],
@@ -34,7 +34,7 @@ export function Footer() {
           {/* Brand Column */}
           <div className="lg:col-span-2 space-y-4">
             <div className="flex items-center gap-2">
-              <div className="text-2xl font-bold">vitrine.io</div>
+              <div className="text-2xl font-bold">quietdash.com</div>
             </div>
             <p className="text-sm text-muted-foreground max-w-sm">
               Open-source e-ink dashboard system for Raspberry Pi. Transform your space
@@ -42,7 +42,7 @@ export function Footer() {
             </p>
             <div className="flex gap-4">
               <a
-                href="https://github.com/fberrez/vitrine.io"
+                href="https://github.com/fberrez/quietdash.com"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="rounded-lg bg-muted p-2 text-muted-foreground transition-colors hover:bg-primary hover:text-primary-foreground"
@@ -138,7 +138,7 @@ export function Footer() {
         {/* Bottom Bar */}
         <div className="mt-12 border-t pt-8 flex flex-col sm:flex-row justify-between items-center gap-4">
           <p className="text-xs text-muted-foreground">
-            © {new Date().getFullYear()} vitrine.io. All rights reserved. Built with ❤️ by the community.
+            © {new Date().getFullYear()} quietdash.com. All rights reserved. Built with ❤️ by the community.
           </p>
           <p className="text-xs text-muted-foreground">
             Made with <a href="#" className="underline hover:text-foreground">open-source</a> technologies

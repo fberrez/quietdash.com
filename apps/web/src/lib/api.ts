@@ -1,4 +1,4 @@
-import { OpenAPI } from '@vitrine/api-client';
+import { OpenAPI } from '@quietdash/api-client';
 
 // Configure the API client
 OpenAPI.BASE = 'http://localhost:3000';

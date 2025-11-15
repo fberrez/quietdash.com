@@ -7,7 +7,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { EncryptionService } from '../common/encryption.service';
 import { CreateApiKeyDto } from './dto/create-api-key.dto';
 import { UpdateApiKeyDto } from './dto/update-api-key.dto';
-import { ApiKeySafe, DecryptedApiKey } from '@vitrine/shared';
+import { ApiKeySafe, DecryptedApiKey } from '@quietdash/shared';
 
 @Injectable()
 export class ApiKeysService {

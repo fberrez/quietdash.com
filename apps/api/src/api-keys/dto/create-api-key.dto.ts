@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsString, IsIn } from 'class-validator';
-import { SERVICE_PROVIDERS } from '@vitrine/shared';
+import { SERVICE_PROVIDERS } from '@quietdash/shared';
 
 const validProviders = Object.values(SERVICE_PROVIDERS);
 

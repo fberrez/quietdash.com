@@ -1,8 +1,8 @@
 #!/usr/bin/python3
 # -*- coding:utf-8 -*-
 """
-Vitrine.io E-Ink Display Client for Raspberry Pi
-Fetches dashboard image from Vitrine.io API and displays on Waveshare 7.5" e-Paper
+QuietDash.io E-Ink Display Client for Raspberry Pi
+Fetches dashboard image from QuietDash.io API and displays on Waveshare 7.5" e-Paper
 """
 
 import sys
@@ -39,16 +39,16 @@ logging.basicConfig(
 )
 
 # Configuration - load from environment variables (from .env file or system env)
-API_BASE_URL = os.getenv('VITRINE_API_URL', 'http://localhost:3000')
-API_EMAIL = os.getenv('VITRINE_EMAIL', 'test@example.com')
-API_PASSWORD = os.getenv('VITRINE_PASSWORD', 'password123')
-REFRESH_INTERVAL = int(os.getenv('VITRINE_REFRESH_INTERVAL', '300'))  # 5 minutes default
+API_BASE_URL = os.getenv('QUIETDASH_API_URL', 'http://localhost:3000')
+API_EMAIL = os.getenv('QUIETDASH_EMAIL', 'test@example.com')
+API_PASSWORD = os.getenv('QUIETDASH_PASSWORD', 'password123')
+REFRESH_INTERVAL = int(os.getenv('QUIETDASH_REFRESH_INTERVAL', '300'))  # 5 minutes default
 
 # Log loaded configuration (without password)
 logging.info(f"Configuration loaded: API_URL={API_BASE_URL}, EMAIL={API_EMAIL}, REFRESH_INTERVAL={REFRESH_INTERVAL}s")
 
-class VitrineDisplay:
-    """Manages the Vitrine.io e-ink display"""
+class QuietDashDisplay:
+    """Manages the QuietDash.io e-ink display"""
 
     def __init__(self):
         self.epd = None
@@ -58,7 +58,7 @@ class VitrineDisplay:
         self.display_height = None
 
     def login(self):
-        """Authenticate with the Vitrine.io API and get access token"""
+        """Authenticate with the QuietDash.io API and get access token"""
         try:
             login_url = f'{API_BASE_URL}/auth/login'
             login_data = {
@@ -244,7 +244,7 @@ class VitrineDisplay:
             date_str = now.strftime('%A, %B %d')
             
             # Draw title
-            draw.text((10, 0), 'Vitrine.io Dashboard', font=font_medium, fill=0)
+            draw.text((10, 0), 'QuietDash.io Dashboard', font=font_medium, fill=0)
             
             # Draw time and date
             draw.text((10, 30), time_str, font=font_large, fill=0)
@@ -430,7 +430,7 @@ class VitrineDisplay:
                 font = ImageFont.load_default()
 
             # Draw centered text
-            message = "vitrine is closed, come back later..."
+            message = "quietdash is closed, come back later..."
 
             # Get text bounding box to center it
             try:
@@ -480,7 +480,7 @@ class VitrineDisplay:
 
 def main():
     """Main function to run the display update loop"""
-    display = VitrineDisplay()
+    display = QuietDashDisplay()
 
     try:
         # Initialize display

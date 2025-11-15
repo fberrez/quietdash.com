@@ -3,18 +3,18 @@ version: '3.8'
 services:
   postgres:
     image: postgres:16-alpine
-    container_name: vitrine-postgres
+    container_name: quietdash-postgres
     restart: unless-stopped
     ports:
       - '5432:5432'
     environment:
-      POSTGRES_USER: vitrine
-      POSTGRES_PASSWORD: vitrine_password
-      POSTGRES_DB: vitrine_db
+      POSTGRES_USER: quietdash
+      POSTGRES_PASSWORD: quietdash_password
+      POSTGRES_DB: quietdash_db
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -U vitrine']
+      test: ['CMD-SHELL', 'pg_isready -U quietdash']
       interval: 10s
       timeout: 5s
       retries: 5

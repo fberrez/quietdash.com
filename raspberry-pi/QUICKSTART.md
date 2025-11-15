@@ -1,4 +1,4 @@
-# Vitrine.io E-Ink Display - Quick Start
+# QuietDash.io E-Ink Display - Quick Start
 
 ## For Raspberry Pi Setup
 
@@ -35,24 +35,24 @@ The script will:
 If you prefer manual setup, edit the `.env` file:
 
 ```bash
-cd ~/vitrine-display
+cd ~/quietdash-display
 cp .env.example .env
 nano .env
 ```
 
 Set your values:
 ```env
-VITRINE_API_URL=http://192.168.1.100:3000  # Your API server
-VITRINE_EMAIL=your-email@example.com
-VITRINE_PASSWORD=your-password
-VITRINE_REFRESH_INTERVAL=300  # 5 minutes
+QUIETDASH_API_URL=http://192.168.1.100:3000  # Your API server
+QUIETDASH_EMAIL=your-email@example.com
+QUIETDASH_PASSWORD=your-password
+QUIETDASH_REFRESH_INTERVAL=300  # 5 minutes
 ```
 
 ### 4. Test Run
 
 ```bash
-cd ~/vitrine-display
-python3 vitrine_display.py
+cd ~/quietdash-display
+python3 quietdash_display.py
 ```
 
 Press `Ctrl+C` to stop.
@@ -63,40 +63,40 @@ Press `Ctrl+C` to stop.
 
 ```bash
 # Start service
-sudo systemctl start vitrine-display.service
+sudo systemctl start quietdash-display.service
 
 # Stop service
-sudo systemctl stop vitrine-display.service
+sudo systemctl stop quietdash-display.service
 
 # Restart service
-sudo systemctl restart vitrine-display.service
+sudo systemctl restart quietdash-display.service
 
 # Check status
-sudo systemctl status vitrine-display.service
+sudo systemctl status quietdash-display.service
 
 # View live logs
-sudo journalctl -u vitrine-display.service -f
+sudo journalctl -u quietdash-display.service -f
 
 # Enable auto-start
-sudo systemctl enable vitrine-display.service
+sudo systemctl enable quietdash-display.service
 
 # Disable auto-start
-sudo systemctl disable vitrine-display.service
+sudo systemctl disable quietdash-display.service
 ```
 
 ### Manual Run
 
 ```bash
 # With .env file
-cd ~/vitrine-display
+cd ~/quietdash-display
 set -a && source .env && set +a
-python3 vitrine_display.py
+python3 quietdash_display.py
 
 # With inline environment variables
-VITRINE_API_URL=http://192.168.1.100:3000 \
-VITRINE_EMAIL=your-email@example.com \
-VITRINE_PASSWORD=your-password \
-python3 ~/vitrine-display/vitrine_display.py
+QUIETDASH_API_URL=http://192.168.1.100:3000 \
+QUIETDASH_EMAIL=your-email@example.com \
+QUIETDASH_PASSWORD=your-password \
+python3 ~/quietdash-display/quietdash_display.py
 ```
 
 ## Troubleshooting
@@ -129,25 +129,25 @@ python3 epd_7in5_test.py
 # Test from Raspberry Pi
 curl http://YOUR_API_IP:3000/auth/login \
   -H "Content-Type: application/json" \
-  -d '{"email":"test@vitrine.io","password":"TestPassword123"}'
+  -d '{"email":"test@quietdash.io","password":"TestPassword123"}'
 ```
 
 ### Update Configuration
 
 ```bash
 # Edit config
-nano ~/vitrine-display/.env
+nano ~/quietdash-display/.env
 
 # Restart service to apply
-sudo systemctl restart vitrine-display.service
+sudo systemctl restart quietdash-display.service
 ```
 
 ## File Locations
 
-- **Scripts**: `~/vitrine-display/`
-- **Service**: `/etc/systemd/system/vitrine-display.service`
-- **Config**: `~/vitrine-display/.env`
-- **Logs**: `sudo journalctl -u vitrine-display.service`
+- **Scripts**: `~/quietdash-display/`
+- **Service**: `/etc/systemd/system/quietdash-display.service`
+- **Config**: `~/quietdash-display/.env`
+- **Logs**: `sudo journalctl -u quietdash-display.service`
 - **Waveshare Library**: `~/e-Paper/`
 
 ## Default Settings
@@ -189,10 +189,10 @@ When running the API on your Mac and connecting from Raspberry Pi on the same Wi
 3. **Configure Raspberry Pi** with your Mac's IP:
    ```bash
    # Edit the .env file
-   nano ~/vitrine-display/.env
+   nano ~/quietdash-display/.env
    
-   # Set VITRINE_API_URL to your Mac's IP:
-   VITRINE_API_URL=http://192.168.1.xxx:3000  # Replace xxx with your Mac's IP
+   # Set QUIETDASH_API_URL to your Mac's IP:
+   QUIETDASH_API_URL=http://192.168.1.xxx:3000  # Replace xxx with your Mac's IP
    ```
 
 ### Firewall Configuration (macOS)
@@ -227,7 +227,7 @@ ping YOUR_MAC_IP
 # Test API endpoint
 curl http://YOUR_MAC_IP:3000/auth/login \
   -H "Content-Type: application/json" \
-  -d '{"email":"test@vitrine.io","password":"TestPassword123"}'
+  -d '{"email":"test@quietdash.io","password":"TestPassword123"}'
 ```
 
 If you get a response, the connection is working!
@@ -249,7 +249,7 @@ If you get a response, the connection is working!
 
 ## Getting Help
 
-1. Check logs: `sudo journalctl -u vitrine-display.service -f`
+1. Check logs: `sudo journalctl -u quietdash-display.service -f`
 2. Test API connectivity from Raspberry Pi
 3. Verify .env configuration
 4. Test Waveshare display with example script

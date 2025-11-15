@@ -9,7 +9,7 @@ export function Navigation() {
           {/* Logo */}
           <div className="flex items-center gap-8">
             <a href="/" className="flex items-center gap-2">
-              <span className="text-xl font-bold">vitrine.io</span>
+              <span className="text-xl font-bold">quietdash.com</span>
             </a>
 
             {/* Desktop Navigation Links */}
@@ -38,7 +38,7 @@ export function Navigation() {
           {/* Right Side Actions */}
           <div className="flex items-center gap-4">
             <Button variant="ghost" size="sm" className="hidden sm:flex" asChild>
-              <a href="https://github.com/fberrez/vitrine.io" target="_blank" rel="noopener noreferrer">
+              <a href="https://github.com/fberrez/quietdash.com" target="_blank" rel="noopener noreferrer">
                 <Github className="mr-2 h-4 w-4" />
                 GitHub
               </a>

@@ -24,8 +24,8 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"],
-      "@vitrine/shared": ["../../packages/shared/src"],
-      "@vitrine/api-client": ["../../packages/api-client/src"]
+      "@quietdash/shared": ["../../packages/shared/src"],
+      "@quietdash/api-client": ["../../packages/api-client/src"]
     }
   },
   "include": ["src"],

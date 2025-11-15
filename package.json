@@ -1,18 +1,21 @@
 {
-  "name": "vitrine-io",
+  "name": "quietdash-com",
   "version": "1.0.0",
   "private": true,
   "packageManager": "pnpm@10.4.1",
   "scripts": {
     "dev": "turbo run dev",
-    "dev:api": "turbo run dev --filter=@vitrine/api",
-    "dev:web": "turbo run dev --filter=@vitrine/web",
-    "dev:marketing": "turbo run dev --filter=@vitrine/marketing",
+    "dev:api": "turbo run dev --filter=@quietdash/api",
+    "dev:web": "turbo run dev --filter=@quietdash/web",
+    "dev:marketing": "turbo run dev --filter=@quietdash/marketing",
     "build": "turbo run build",
+    "build:api": "turbo run build --filter=@quietdash/api",
+    "build:web": "turbo run build --filter=@quietdash/web",
+    "build:marketing": "turbo run build --filter=@quietdash/marketing",
     "lint": "turbo run lint",
     "clean": "turbo run clean",
     "type-check": "turbo run type-check",
-    "generate:api-client": "turbo run generate:openapi --filter=@vitrine/api && turbo run generate:client --filter=@vitrine/api-client"
+    "generate:api-client": "turbo run generate:openapi --filter=@quietdash/api && turbo run generate:client --filter=@quietdash/api-client"
   },
   "pnpm": {
     "onlyBuiltDependencies": [

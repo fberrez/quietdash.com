@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { UserSafe } from '@vitrine/shared';
-import { AuthenticationService } from '@vitrine/api-client';
-import { OpenAPI } from '@vitrine/api-client';
+import { UserSafe } from '@quietdash/shared';
+import { AuthenticationService } from '@quietdash/api-client';
+import { OpenAPI } from '@quietdash/api-client';
 
 interface AuthContextType {
   user: UserSafe | null;

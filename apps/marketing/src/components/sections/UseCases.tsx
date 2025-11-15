@@ -47,7 +47,7 @@ export function UseCases() {
             Endless Possibilities
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            From personal productivity to family organization, vitrine.io adapts to your lifestyle
+            From personal productivity to family organization, quietdash.com adapts to your lifestyle
           </p>
         </div>
 

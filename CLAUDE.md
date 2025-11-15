@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Vitrine.io is a monorepo-based e-ink display dashboard system that generates and displays customizable widget-based dashboards on Waveshare 7.5" e-Paper displays (800×480, B&W). The system consists of a NestJS backend API, React frontend web app, shared TypeScript packages, and a Python client for Raspberry Pi hardware integration.
+QuietDash.com is a monorepo-based e-ink display dashboard system that generates and displays customizable widget-based dashboards on Waveshare 7.5" e-Paper displays (800×480, B&W). The system consists of a NestJS backend API, React frontend web app, shared TypeScript packages, and a Python client for Raspberry Pi hardware integration.
 
 ## Technology Stack
 
@@ -29,8 +29,8 @@ docker-compose up -d
 pnpm dev
 
 # Or start individually:
-pnpm --filter @vitrine/api dev        # Backend on :3000
-pnpm --filter @vitrine/web dev        # Frontend on :5173
+pnpm --filter @quietdash/api dev        # Backend on :3000
+pnpm --filter @quietdash/web dev        # Frontend on :5173
 ```
 
 ### Database Operations
@@ -49,15 +49,15 @@ pnpm generate:api-client       # Rebuild + generate OpenAPI spec + regenerate Ty
 ```
 
 This runs:
-1. `pnpm --filter @vitrine/api build` - Compile backend
-2. `pnpm --filter @vitrine/api generate:openapi` - Generate OpenAPI JSON
-3. `pnpm --filter @vitrine/api-client generate:client` - Generate TypeScript client
+1. `pnpm --filter @quietdash/api build` - Compile backend
+2. `pnpm --filter @quietdash/api generate:openapi` - Generate OpenAPI JSON
+3. `pnpm --filter @quietdash/api-client generate:client` - Generate TypeScript client
 
 ### Building
 ```bash
 pnpm build                     # Build all packages and apps (turbo)
-pnpm --filter @vitrine/api build      # Build backend only
-pnpm --filter @vitrine/web build      # Build frontend only
+pnpm --filter @quietdash/api build      # Build backend only
+pnpm --filter @quietdash/web build      # Build frontend only
 ```
 
 ### Code Quality
@@ -70,7 +70,7 @@ pnpm type-check                # TypeScript validation
 ```bash
 # From raspberry-pi directory:
 ./install.sh                           # Automated setup (run on Pi)
-python3 vitrine_display.py             # Run manually for testing
+python3 quietdash_display.py             # Run manually for testing
 sudo systemctl status vitrine-display.service  # Check service status
 sudo journalctl -u vitrine-display.service -f  # View logs
 ```
@@ -79,7 +79,7 @@ sudo journalctl -u vitrine-display.service -f  # View logs
 
 ### Monorepo Structure
 ```
-vitrine.io/
+quietdash.com/
 ├── apps/
 │   ├── api/          # NestJS backend
 │   └── web/          # Vite + React frontend
@@ -125,7 +125,7 @@ vitrine.io/
 - Auth managed via Context API (`contexts/AuthContext`)
 
 **API Integration:**
-- Uses auto-generated `@vitrine/api-client` package
+- Uses auto-generated `@quietdash/api-client` package
 - Type-safe API calls with full TypeScript support
 - Vite proxy: `/api/*` → `http://localhost:3000/*`
 
@@ -162,7 +162,7 @@ vitrine.io/
 ### Backend (`apps/api/.env`)
 Required variables:
 ```bash
-DATABASE_URL="postgresql://vitrine:vitrine_password@localhost:5432/vitrine_db"
+DATABASE_URL="postgresql://vitrine:quietdash_password@localhost:5432/quietdash_db"
 JWT_SECRET="your-secret-key"
 JWT_EXPIRES_IN="7d"
 ENCRYPTION_KEY="exactly32characterslongstring!!"  # MUST be 32 chars
@@ -208,7 +208,7 @@ VITRINE_REFRESH_INTERVAL="300"  # seconds
 2. Follow node-canvas API (HTML5 Canvas API)
 3. Ensure output is 800×480 pixels, 1-bit B&W PNG
 4. Test with `GET /display/preview` in browser
-5. Test on Raspberry Pi with `python3 vitrine_display.py`
+5. Test on Raspberry Pi with `python3 quietdash_display.py`
 
 ## Security Considerations
 
@@ -241,8 +241,8 @@ Create via `POST /auth/register` or use existing account.
 
 ## Path Aliases
 
-- `@vitrine/shared` - Shared types, constants, schemas
-- `@vitrine/api-client` - Auto-generated API client
+- `@quietdash/shared` - Shared types, constants, schemas
+- `@quietdash/api-client` - Auto-generated API client
 - `@/` - Frontend src directory (web app only)
 
 ## Build Pipeline
@@ -257,7 +257,7 @@ Turbo caches build outputs for faster subsequent builds.
 
 ## Debugging
 
-- **Backend logs:** Console output from `pnpm --filter @vitrine/api dev`
+- **Backend logs:** Console output from `pnpm --filter @quietdash/api dev`
 - **Frontend logs:** Browser console
 - **Database inspection:** `npx prisma studio` from `apps/api/`
 - **API documentation:** `http://localhost:3000/api/docs` (Swagger UI)

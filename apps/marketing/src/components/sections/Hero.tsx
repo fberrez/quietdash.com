@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button';
-import { ArrowRight, Play } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { DashboardCarousel } from '@/components/DashboardCarousel';
 
 export function Hero() {

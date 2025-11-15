@@ -22,7 +22,7 @@
     "forceConsistentCasingInFileNames": true,
     "noFallthroughCasesInSwitch": true,
     "paths": {
-      "@vitrine/shared": ["../../packages/shared/src"]
+      "@quietdash/shared": ["../../packages/shared/src"]
     }
   },
   "include": ["src/**/*"],

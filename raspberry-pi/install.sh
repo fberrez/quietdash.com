@@ -1,10 +1,10 @@
 #!/bin/bash
-# Vitrine.io E-Ink Display - Installation Script for Raspberry Pi
+# QuietDash.io E-Ink Display - Installation Script for Raspberry Pi
 
 set -e
 
 echo "========================================"
-echo "Vitrine.io E-Ink Display - Installation"
+echo "QuietDash.io E-Ink Display - Installation"
 echo "========================================"
 echo ""
 
@@ -79,28 +79,28 @@ fi
 echo -e "${GREEN}✓ Waveshare library cloned${NC}"
 
 echo ""
-echo -e "${GREEN}Step 4: Creating Vitrine display directory...${NC}"
-VITRINE_DIR="$HOME/vitrine-display"
-mkdir -p "$VITRINE_DIR"
+echo -e "${GREEN}Step 4: Creating QuietDash display directory...${NC}"
+QUIETDASH_DIR="$HOME/quietdash-display"
+mkdir -p "$QUIETDASH_DIR"
 
 # Copy files from script directory
-echo "Copying files from $SCRIPT_DIR to $VITRINE_DIR..."
-if [ ! -f "$SCRIPT_DIR/vitrine_display.py" ]; then
-    echo -e "${RED}Error: vitrine_display.py not found in $SCRIPT_DIR${NC}"
+echo "Copying files from $SCRIPT_DIR to $QUIETDASH_DIR..."
+if [ ! -f "$SCRIPT_DIR/quietdash_display.py" ]; then
+    echo -e "${RED}Error: quietdash_display.py not found in $SCRIPT_DIR${NC}"
     exit 1
 fi
-cp "$SCRIPT_DIR/vitrine_display.py" "$VITRINE_DIR/"
-cp "$SCRIPT_DIR/requirements.txt" "$VITRINE_DIR/"
+cp "$SCRIPT_DIR/quietdash_display.py" "$QUIETDASH_DIR/"
+cp "$SCRIPT_DIR/requirements.txt" "$QUIETDASH_DIR/"
 if [ -f "$SCRIPT_DIR/.env.example" ]; then
-    cp "$SCRIPT_DIR/.env.example" "$VITRINE_DIR/"
+    cp "$SCRIPT_DIR/.env.example" "$QUIETDASH_DIR/"
 fi
 
 # Make script executable
-chmod +x "$VITRINE_DIR/vitrine_display.py"
+chmod +x "$QUIETDASH_DIR/quietdash_display.py"
 
 echo ""
 echo -e "${GREEN}Step 5: Creating virtual environment and installing Python dependencies...${NC}"
-cd "$VITRINE_DIR"
+cd "$QUIETDASH_DIR"
 if [ ! -d "venv" ]; then
     python3 -m venv venv
     echo -e "${GREEN}✓ Virtual environment created${NC}"
@@ -125,10 +125,10 @@ deactivate
 
 echo ""
 echo -e "${GREEN}Step 6: Creating configuration file...${NC}"
-if [ -f "$VITRINE_DIR/.env" ]; then
+if [ -f "$QUIETDASH_DIR/.env" ]; then
     echo -e "${YELLOW}.env file already exists, skipping...${NC}"
 else
-    echo "Please provide your Vitrine.io API configuration:"
+    echo "Please provide your QuietDash.io API configuration:"
 
     read -p "API URL (e.g., http://192.168.1.100:3000): " api_url
     read -p "Email: " email
@@ -137,16 +137,16 @@ else
     read -p "Refresh interval in seconds (default: 300): " refresh_interval
     refresh_interval=${refresh_interval:-300}
 
-    cat > "$VITRINE_DIR/.env" <<EOF
-# Vitrine.io API Configuration
-VITRINE_API_URL=${api_url}
-VITRINE_EMAIL=${email}
-VITRINE_PASSWORD=${password}
+    cat > "$QUIETDASH_DIR/.env" <<EOF
+# QuietDash.io API Configuration
+QUIETDASH_API_URL=${api_url}
+QUIETDASH_EMAIL=${email}
+QUIETDASH_PASSWORD=${password}
 
 # Refresh interval in seconds
-VITRINE_REFRESH_INTERVAL=${refresh_interval}
+QUIETDASH_REFRESH_INTERVAL=${refresh_interval}
 EOF
-    echo -e "${GREEN}✓ Configuration saved to $VITRINE_DIR/.env${NC}"
+    echo -e "${GREEN}✓ Configuration saved to $QUIETDASH_DIR/.env${NC}"
 fi
 
 echo ""
@@ -155,12 +155,12 @@ read -p "Do you want to test the display now? (y/n) " -n 1 -r
 echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
     echo "Starting test... (Press Ctrl+C to stop)"
-    cd "$VITRINE_DIR"
+    cd "$QUIETDASH_DIR"
     set -a
     source .env
     set +a
     source venv/bin/activate
-    python vitrine_display.py
+    python quietdash_display.py
     deactivate
 fi
 
@@ -170,26 +170,26 @@ read -p "Do you want to enable auto-start on boot? (y/n) " -n 1 -r
 echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
     # Update service file with actual paths
-    sed "s|/home/pi/vitrine-display|$VITRINE_DIR|g" "$SCRIPT_DIR/vitrine-display.service" | \
+    sed "s|/home/pi/quietdash-display|$QUIETDASH_DIR|g" "$SCRIPT_DIR/quietdash-display.service" | \
     sed "s|User=pi|User=$USER|g" | \
-    sed "s|/usr/bin/python3|$VITRINE_DIR/venv/bin/python|g" | \
-    sudo tee /etc/systemd/system/vitrine-display.service > /dev/null
+    sed "s|/usr/bin/python3|$QUIETDASH_DIR/venv/bin/python|g" | \
+    sudo tee /etc/systemd/system/quietdash-display.service > /dev/null
 
     sudo systemctl daemon-reload
-    sudo systemctl enable vitrine-display.service
+    sudo systemctl enable quietdash-display.service
 
     echo -e "${GREEN}✓ Service installed and enabled${NC}"
 
     read -p "Start the service now? (y/n) " -n 1 -r
     echo
     if [[ $REPLY =~ ^[Yy]$ ]]; then
-        sudo systemctl start vitrine-display.service
+        sudo systemctl start quietdash-display.service
         echo ""
         echo "Service started. Check status with:"
-        echo "  sudo systemctl status vitrine-display.service"
+        echo "  sudo systemctl status quietdash-display.service"
         echo ""
         echo "View logs with:"
-        echo "  sudo journalctl -u vitrine-display.service -f"
+        echo "  sudo journalctl -u quietdash-display.service -f"
     fi
 fi
 
@@ -198,12 +198,12 @@ echo -e "${GREEN}========================================"
 echo "Installation Complete! ✓"
 echo "========================================${NC}"
 echo ""
-echo "Files installed to: $VITRINE_DIR"
+echo "Files installed to: $QUIETDASH_DIR"
 echo ""
 echo "Next steps:"
-echo "  1. To run manually: cd $VITRINE_DIR && source venv/bin/activate && python vitrine_display.py"
-echo "  2. To check service: sudo systemctl status vitrine-display.service"
-echo "  3. To view logs: sudo journalctl -u vitrine-display.service -f"
+echo "  1. To run manually: cd $QUIETDASH_DIR && source venv/bin/activate && python quietdash_display.py"
+echo "  2. To check service: sudo systemctl status quietdash-display.service"
+echo "  3. To view logs: sudo journalctl -u quietdash-display.service -f"
 echo ""
-echo "Configuration: $VITRINE_DIR/.env"
+echo "Configuration: $QUIETDASH_DIR/.env"
 echo ""

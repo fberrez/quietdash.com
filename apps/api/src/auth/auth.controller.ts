@@ -10,7 +10,7 @@ import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { CurrentUser } from './decorators/current-user.decorator';
-import { AuthResponse, UserSafe } from '@vitrine/shared';
+import { AuthResponse, UserSafe } from '@quietdash/shared';
 
 @ApiTags('Authentication')
 @Controller('auth')

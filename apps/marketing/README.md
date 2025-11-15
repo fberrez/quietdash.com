@@ -95,7 +95,7 @@ Organized navigation + social proof
 pnpm dev:marketing
 
 # Or directly
-pnpm --filter @vitrine/marketing dev
+pnpm --filter @quietdash/marketing dev
 ```
 
 The dev server runs on **http://localhost:5174**
@@ -107,7 +107,7 @@ The dev server runs on **http://localhost:5174**
 pnpm build
 
 # Or directly
-pnpm --filter @vitrine/marketing build
+pnpm --filter @quietdash/marketing build
 ```
 
 ## Design Philosophy

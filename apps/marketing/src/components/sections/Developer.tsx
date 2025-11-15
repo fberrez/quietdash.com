@@ -48,7 +48,7 @@ export function Developer() {
                 Hackers Welcome
               </h2>
               <p className="text-lg text-muted-foreground">
-                Built by developers, for developers. Vitrine.io is completely open-source
+                Built by developers, for developers. QuietDash.com is completely open-source
                 and designed to be extended, modified, and improved by the community.
               </p>
             </div>
@@ -76,7 +76,7 @@ export function Developer() {
             {/* CTAs */}
             <div className="flex flex-col sm:flex-row gap-4">
               <Button variant="default" size="lg" className="group" asChild>
-                <a href="https://github.com/fberrez/vitrine.io" target="_blank" rel="noopener noreferrer">
+                <a href="https://github.com/fberrez/quietdash.com" target="_blank" rel="noopener noreferrer">
                   <Github className="mr-2 h-4 w-4" />
                   View on GitHub
                 </a>
@@ -130,7 +130,7 @@ export function Developer() {
 
                 <pre className="text-xs bg-background rounded-lg p-4 overflow-x-auto border">
                   <code className="text-muted-foreground">
-{`import { Widget } from '@vitrine/shared';
+{`import { Widget } from '@quietdash/shared';
 
 export const WeatherWidget: Widget = {
   id: 'weather',

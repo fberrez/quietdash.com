@@ -18,7 +18,7 @@ export const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }
             <div className="flex items-center space-x-8">
               <Link to="/dashboards" className="flex items-center space-x-2">
                 <Monitor className="h-6 w-6 text-blue-600" />
-                <span className="text-xl font-bold text-gray-900">Vitrine.io</span>
+                <span className="text-xl font-bold text-gray-900">QuietDash.io</span>
               </Link>
 
               <nav className="hidden md:flex space-x-4">

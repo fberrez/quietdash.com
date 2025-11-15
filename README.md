@@ -1,4 +1,4 @@
-# Vitrine.io - E-Ink Display Dashboard
+# QuietDash.com - E-Ink Display Dashboard
 
 A full-stack TypeScript monorepo application for generating and managing dashboard images for Waveshare 7.5" e-ink displays (800×480 pixels).
 
@@ -7,7 +7,7 @@ A full-stack TypeScript monorepo application for generating and managing dashboa
 This is a Turborepo monorepo with the following structure:
 
 ```
-vitrine.io/
+quietdash.com/
 ├── apps/
 │   ├── api/          # NestJS backend API
 │   └── web/          # Vite + React frontend
@@ -50,7 +50,7 @@ vitrine.io/
 1. **Clone the repository**
 ```bash
 git clone <your-repo-url>
-cd vitrine.io
+cd quietdash.com
 ```
 
 2. **Install dependencies**
@@ -86,16 +86,16 @@ cd ../..
 
 6. **Build the shared package**
 ```bash
-pnpm --filter @vitrine/shared build
+pnpm --filter @quietdash/shared build
 ```
 
 7. **Start development servers**
 ```bash
 # Terminal 1 - Backend API
-pnpm --filter @vitrine/api dev
+pnpm --filter @quietdash/api dev
 
 # Terminal 2 - Frontend
-pnpm --filter @vitrine/web dev
+pnpm --filter @quietdash/web dev
 ```
 
 The application will be available at:
@@ -176,7 +176,7 @@ After making changes to the backend API:
 
 ```bash
 # 1. Build the API to generate OpenAPI spec
-pnpm --filter @vitrine/api build
+pnpm --filter @quietdash/api build
 
 # 2. Generate OpenAPI JSON
 cd apps/api

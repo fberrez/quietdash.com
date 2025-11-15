@@ -1,6 +1,6 @@
-# Vitrine.io Raspberry Pi E-Ink Display Client
+# QuietDash.io Raspberry Pi E-Ink Display Client
 
-This script fetches your personalized dashboard image from the Vitrine.io API and displays it on a Waveshare 7.5" e-Paper display connected to your Raspberry Pi.
+This script fetches your personalized dashboard image from the QuietDash.io API and displays it on a Waveshare 7.5" e-Paper display connected to your Raspberry Pi.
 
 ## Hardware Requirements
 
@@ -34,15 +34,15 @@ cd e-Paper/RaspberryPi_JetsonNano/python
 sudo python3 setup.py install
 ```
 
-### 2. Install Vitrine Display Client
+### 2. Install QuietDash Display Client
 
 ```bash
 # Create directory for the display client
-mkdir -p ~/vitrine-display
-cd ~/vitrine-display
+mkdir -p ~/quietdash-display
+cd ~/quietdash-display
 
 # Copy the script and requirements
-# (Transfer vitrine_display.py and requirements.txt to this directory)
+# (Transfer quietdash_display.py and requirements.txt to this directory)
 
 # Install Python dependencies
 pip3 install -r requirements.txt
@@ -58,18 +58,18 @@ nano .env
 ```
 
 Edit the values:
-- `VITRINE_API_URL`: Your Vitrine.io API server URL
-- `VITRINE_EMAIL`: Your registered email
-- `VITRINE_PASSWORD`: Your password
-- `VITRINE_REFRESH_INTERVAL`: How often to refresh (in seconds)
+- `QUIETDASH_API_URL`: Your QuietDash.io API server URL
+- `QUIETDASH_EMAIL`: Your registered email
+- `QUIETDASH_PASSWORD`: Your password
+- `QUIETDASH_REFRESH_INTERVAL`: How often to refresh (in seconds)
 
 ### 4. Test the Script
 
 Run the script manually to test:
 
 ```bash
-cd ~/vitrine-display
-python3 vitrine_display.py
+cd ~/quietdash-display
+python3 quietdash_display.py
 ```
 
 Press `Ctrl+C` to stop.
@@ -82,42 +82,42 @@ To make the display update automatically on boot:
 
 ```bash
 # Copy service file
-sudo cp vitrine-display.service /etc/systemd/system/
+sudo cp quietdash-display.service /etc/systemd/system/
 
 # Edit the service file if needed (adjust paths and user)
-sudo nano /etc/systemd/system/vitrine-display.service
+sudo nano /etc/systemd/system/quietdash-display.service
 
 # Reload systemd
 sudo systemctl daemon-reload
 
 # Enable the service
-sudo systemctl enable vitrine-display.service
+sudo systemctl enable quietdash-display.service
 
 # Start the service
-sudo systemctl start vitrine-display.service
+sudo systemctl start quietdash-display.service
 ```
 
 ### 2. Check Service Status
 
 ```bash
 # Check if running
-sudo systemctl status vitrine-display.service
+sudo systemctl status quietdash-display.service
 
 # View logs
-sudo journalctl -u vitrine-display.service -f
+sudo journalctl -u quietdash-display.service -f
 ```
 
 ### 3. Manage the Service
 
 ```bash
 # Stop the service
-sudo systemctl stop vitrine-display.service
+sudo systemctl stop quietdash-display.service
 
 # Restart the service
-sudo systemctl restart vitrine-display.service
+sudo systemctl restart quietdash-display.service
 
 # Disable auto-start
-sudo systemctl disable vitrine-display.service
+sudo systemctl disable quietdash-display.service
 ```
 
 ## Manual Usage
@@ -126,10 +126,10 @@ Run once without service:
 
 ```bash
 # With environment variables
-export VITRINE_API_URL=http://your-server:3000
-export VITRINE_EMAIL=your-email@example.com
-export VITRINE_PASSWORD=your-password
-python3 vitrine_display.py
+export QUIETDASH_API_URL=http://your-server:3000
+export QUIETDASH_EMAIL=your-email@example.com
+export QUIETDASH_PASSWORD=your-password
+python3 quietdash_display.py
 ```
 
 Or with .env file:
@@ -139,7 +139,7 @@ Or with .env file:
 set -a
 source .env
 set +a
-python3 vitrine_display.py
+python3 quietdash_display.py
 ```
 
 ## Troubleshooting
@@ -179,7 +179,7 @@ python3 vitrine_display.py
 
 1. Check logs:
    ```bash
-   sudo journalctl -u vitrine-display.service -n 50
+   sudo journalctl -u quietdash-display.service -n 50
    ```
 
 2. Verify image is being fetched:
@@ -193,10 +193,10 @@ python3 vitrine_display.py
 
 | Environment Variable | Default | Description |
 |---------------------|---------|-------------|
-| `VITRINE_API_URL` | `http://localhost:3000` | API server URL |
-| `VITRINE_EMAIL` | `test@vitrine.io` | User email for authentication |
-| `VITRINE_PASSWORD` | `TestPassword123` | User password |
-| `VITRINE_REFRESH_INTERVAL` | `300` | Refresh interval in seconds (5 min) |
+| `QUIETDASH_API_URL` | `http://localhost:3000` | API server URL |
+| `QUIETDASH_EMAIL` | `test@quietdash.io` | User email for authentication |
+| `QUIETDASH_PASSWORD` | `TestPassword123` | User password |
+| `QUIETDASH_REFRESH_INTERVAL` | `300` | Refresh interval in seconds (5 min) |
 
 ## Script Features
 
@@ -232,7 +232,7 @@ python3 vitrine_display.py
 
 ## Standalone Display Scripts
 
-In addition to the API-connected `vitrine_display.py`, there are standalone display scripts that generate content locally without requiring API access:
+In addition to the API-connected `quietdash_display.py`, there are standalone display scripts that generate content locally without requiring API access:
 
 ### Health Dashboard (`health_dashboard_display.py`)
 
@@ -299,4 +299,4 @@ Additional display scripts for specific use cases:
 
 ## License
 
-This script is part of the Vitrine.io project.
+This script is part of the QuietDash.io project.

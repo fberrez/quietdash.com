@@ -1,0 +1,18 @@
+[Unit]
+Description=QuietDash.io E-Ink Display Service
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=pi
+WorkingDirectory=/home/pi/quietdash-display
+EnvironmentFile=/home/pi/quietdash-display/.env
+ExecStart=/usr/bin/python3 /home/pi/quietdash-display/quietdash_display.py
+Restart=always
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

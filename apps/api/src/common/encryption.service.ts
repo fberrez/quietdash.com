@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as crypto from 'crypto';
-import { ENCRYPTION } from '@vitrine/shared';
+import { ENCRYPTION } from '@quietdash/shared';
 
 @Injectable()
 export class EncryptionService {

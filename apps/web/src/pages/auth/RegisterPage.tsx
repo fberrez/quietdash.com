@@ -48,7 +48,7 @@ export default function RegisterPage() {
         <CardHeader className="space-y-1 flex flex-col items-center">
           <div className="flex items-center space-x-2 mb-4">
             <Monitor className="h-8 w-8 text-blue-600" />
-            <span className="text-2xl font-bold">Vitrine.io</span>
+            <span className="text-2xl font-bold">QuietDash.io</span>
           </div>
           <CardTitle className="text-2xl">Create an account</CardTitle>
           <CardDescription>

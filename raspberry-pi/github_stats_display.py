@@ -56,7 +56,7 @@ def generate_mock_data():
 
     # Recent activity
     activity_types = [
-        ("Merged PR", "fix: resolve authentication bug", "vitrine.io"),
+        ("Merged PR", "fix: resolve authentication bug", "quietdash.io"),
         ("Opened Issue", "Add dark mode support", "ui-library"),
         ("Pushed commits", "3 commits to main", "api-service"),
         ("Closed PR", "feat: implement caching layer", "backend"),

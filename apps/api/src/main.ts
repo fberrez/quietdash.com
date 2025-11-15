@@ -36,7 +36,7 @@ async function bootstrap() {
 
   // Swagger/OpenAPI configuration
   const config = new DocumentBuilder()
-    .setTitle('Vitrine.io API')
+    .setTitle('QuietDash API')
     .setDescription('API for E-Ink Display Dashboard')
     .setVersion('1.0')
     .addBearerAuth(

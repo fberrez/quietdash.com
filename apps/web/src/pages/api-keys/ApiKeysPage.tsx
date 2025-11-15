@@ -19,7 +19,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '../../components/ui/select';
-import { ApiKeysService } from '@vitrine/api-client';
+import { ApiKeysService } from '@quietdash/api-client';
 import { Plus, Trash2, Key } from 'lucide-react';
 import { toast } from 'sonner';
 

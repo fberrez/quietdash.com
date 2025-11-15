@@ -8,7 +8,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 import * as bcrypt from 'bcrypt';
-import { AuthResponse, UserSafe, JwtPayload } from '@vitrine/shared';
+import { AuthResponse, UserSafe, JwtPayload } from '@quietdash/shared';
 
 @Injectable()
 export class AuthService {

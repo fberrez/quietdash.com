@@ -1,4 +1,4 @@
-# @vitrine/api-client
+# @quietdash/api-client
 
 Auto-generated TypeScript API client from OpenAPI specification.
 
@@ -12,7 +12,7 @@ Auto-generated TypeScript API client from OpenAPI specification.
 
 ```bash
 # From the root of the monorepo
-npm run generate:api-client
+pnpm generate:api-client
 ```
 
 This will:
@@ -22,7 +22,7 @@ This will:
 ## Usage
 
 ```typescript
-import { DefaultService } from '@vitrine/api-client';
+import { DefaultService } from '@quietdash/api-client';
 
 // The client will be configured in the frontend app
 const response = await DefaultService.authControllerLogin({

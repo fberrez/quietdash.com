@@ -39,7 +39,7 @@ def generate_mock_data():
         dict with project status, uptime, deployments, and metrics
     """
     project_names = [
-        ("vitrine.io", "E-ink dashboard platform"),
+        ("quietdash.io", "E-ink dashboard platform"),
         ("api-monitor", "API uptime tracker"),
         ("notion-sync", "Notion automation tool"),
         ("meal-planner", "Weekly meal planning app"),
