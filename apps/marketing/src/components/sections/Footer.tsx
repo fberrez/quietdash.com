@@ -1,38 +1,12 @@
-import { Github, Twitter, Mail } from 'lucide-react';
-
-const footerLinks = {
-  product: [
-    { label: 'Features', href: '#features' },
-    { label: 'Pricing', href: '#pricing' },
-    { label: 'Use Cases', href: '#use-cases' },
-    { label: 'Hardware', href: '#hardware' },
-  ],
-  developers: [
-    { label: 'Documentation', href: '#' },
-    { label: 'GitHub', href: 'https://github.com/fberrez/quietdash.com' },
-    { label: 'API Reference', href: '#' },
-    { label: 'Widget Gallery', href: '#' },
-  ],
-  company: [
-    { label: 'About', href: '#' },
-    { label: 'Blog', href: '#' },
-    { label: 'Contact', href: '#' },
-    { label: 'Support', href: '#' },
-  ],
-  legal: [
-    { label: 'Privacy Policy', href: '#' },
-    { label: 'Terms of Service', href: '#' },
-    { label: 'License', href: '#' },
-  ],
-};
+import { Github, Mail, ExternalLink } from 'lucide-react';
 
 export function Footer() {
   return (
     <footer className="border-t bg-muted/30">
       <div className="container mx-auto px-4 py-12 sm:py-16">
-        <div className="grid gap-8 lg:grid-cols-5">
+        <div className="space-y-4">
           {/* Brand Column */}
-          <div className="lg:col-span-2 space-y-4">
+          <div className="space-y-4">
             <div className="flex items-center gap-2">
               <div className="text-2xl font-bold">quietdash.com</div>
             </div>
@@ -51,86 +25,21 @@ export function Footer() {
                 <Github className="h-5 w-5" />
               </a>
               <a
-                href="#"
+                href="https://bsky.app/profile/fberrez.bsky.social"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="rounded-lg bg-muted p-2 text-muted-foreground transition-colors hover:bg-primary hover:text-primary-foreground"
-                aria-label="Twitter"
+                aria-label="Bluesky"
               >
-                <Twitter className="h-5 w-5" />
+                <ExternalLink className="h-5 w-5" />
               </a>
               <a
-                href="#"
+                href="mailto:contact@quietdash.com"
                 className="rounded-lg bg-muted p-2 text-muted-foreground transition-colors hover:bg-primary hover:text-primary-foreground"
                 aria-label="Email"
               >
                 <Mail className="h-5 w-5" />
               </a>
-            </div>
-          </div>
-
-          {/* Links Columns */}
-          <div className="grid grid-cols-2 gap-8 lg:col-span-3 lg:grid-cols-4">
-            <div className="space-y-3">
-              <h3 className="text-sm font-semibold">Product</h3>
-              <ul className="space-y-2">
-                {footerLinks.product.map((link, index) => (
-                  <li key={index}>
-                    <a
-                      href={link.href}
-                      className="text-sm text-muted-foreground transition-colors hover:text-foreground"
-                    >
-                      {link.label}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            <div className="space-y-3">
-              <h3 className="text-sm font-semibold">Developers</h3>
-              <ul className="space-y-2">
-                {footerLinks.developers.map((link, index) => (
-                  <li key={index}>
-                    <a
-                      href={link.href}
-                      className="text-sm text-muted-foreground transition-colors hover:text-foreground"
-                    >
-                      {link.label}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            <div className="space-y-3">
-              <h3 className="text-sm font-semibold">Company</h3>
-              <ul className="space-y-2">
-                {footerLinks.company.map((link, index) => (
-                  <li key={index}>
-                    <a
-                      href={link.href}
-                      className="text-sm text-muted-foreground transition-colors hover:text-foreground"
-                    >
-                      {link.label}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            <div className="space-y-3">
-              <h3 className="text-sm font-semibold">Legal</h3>
-              <ul className="space-y-2">
-                {footerLinks.legal.map((link, index) => (
-                  <li key={index}>
-                    <a
-                      href={link.href}
-                      className="text-sm text-muted-foreground transition-colors hover:text-foreground"
-                    >
-                      {link.label}
-                    </a>
-                  </li>
-                ))}
-              </ul>
             </div>
           </div>
         </div>
@@ -141,7 +50,7 @@ export function Footer() {
             © {new Date().getFullYear()} quietdash.com. All rights reserved. Built with ❤️ by the community.
           </p>
           <p className="text-xs text-muted-foreground">
-            Made with <a href="#" className="underline hover:text-foreground">open-source</a> technologies
+            Made with open-source technologies
           </p>
         </div>
       </div>
