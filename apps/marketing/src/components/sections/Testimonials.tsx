@@ -7,8 +7,7 @@ const testimonials = [
     name: 'r/digitalminimalism',
     role: '703 upvotes, 59k views',
     initials: 'HU',
-    quote:
-      'I love this! If there was something like this to buy, I would buy it. Could you maybe make a guide for dummies how to make this? :)',
+    quote: 'I love this! If there was something like this to buy, I would buy it :)',
     rating: 5,
     link: 'https://www.reddit.com/r/digitalminimalism/comments/1ow6l2g/comment/nonu1xr',
     username: 'u/human-computer-04',
