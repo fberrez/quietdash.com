@@ -232,6 +232,75 @@
           "API Keys"
         ]
       }
+    },
+    "/waitlist": {
+      "post": {
+        "operationId": "WaitlistController_joinWaitlist",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/JoinWaitlistDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Verification email sent successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WaitlistResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid email or already on waitlist"
+          }
+        },
+        "summary": "Join the waitlist",
+        "tags": [
+          "waitlist"
+        ]
+      }
+    },
+    "/waitlist/verify/{token}": {
+      "get": {
+        "operationId": "WaitlistController_verifyEmail",
+        "parameters": [
+          {
+            "name": "token",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Email verified and added to waitlist",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VerifyResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Invalid or expired verification token"
+          }
+        },
+        "summary": "Verify email address",
+        "tags": [
+          "waitlist"
+        ]
+      }
     }
   },
   "info": {
@@ -323,6 +392,57 @@
         },
         "required": [
           "apiKey"
+        ]
+      },
+      "JoinWaitlistDto": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "description": "Email address to join the waitlist",
+            "example": "user@example.com"
+          }
+        },
+        "required": [
+          "email"
+        ]
+      },
+      "WaitlistResponseDto": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "Success message",
+            "example": "Please check your email to verify your address"
+          },
+          "email": {
+            "type": "string",
+            "description": "Email address submitted",
+            "example": "user@example.com"
+          }
+        },
+        "required": [
+          "message",
+          "email"
+        ]
+      },
+      "VerifyResponseDto": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "Success message",
+            "example": "Email verified successfully! Welcome to the waitlist."
+          },
+          "addedToResend": {
+            "type": "boolean",
+            "description": "Indicates if user was added to Resend",
+            "example": true
+          }
+        },
+        "required": [
+          "message",
+          "addedToResend"
         ]
       }
     }

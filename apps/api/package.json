@@ -5,7 +5,7 @@
   "scripts": {
     "build": "nest build && pnpm postbuild",
     "postbuild": "printf \"require('./apps/api/src/main');\\n\" > dist/main.js",
-    "dev": "nodemon --exec ts-node -r tsconfig-paths/register src/main.ts --watch src --ext ts",
+    "dev": "npx prisma migrate dev && nodemon --exec ts-node -r tsconfig-paths/register src/main.ts --watch src --ext ts",
     "start": "node dist/main",
     "start:prod": "NODE_ENV=production node dist/main",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\"",
@@ -32,6 +32,7 @@
     "passport-jwt": "^4.0.1",
     "passport-local": "^1.0.0",
     "reflect-metadata": "^0.2.2",
+    "resend": "^6.4.2",
     "rxjs": "^7.8.1",
     "zod": "^3.24.1"
   },

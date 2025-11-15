@@ -37,7 +37,8 @@
       "WebSearch",
       "Bash(npx tailwindcss:*)",
       "Bash(find:*)",
-      "Bash(xargs sed:*)"
+      "Bash(xargs sed:*)",
+      "Bash(xargs:*)"
     ],
     "deny": [],
     "ask": []

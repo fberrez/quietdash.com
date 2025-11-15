@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Productivity Dashboard - Screenshot</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      background: #f5f5f5;
+      padding: 20px;
+    }
+    
+    .dashboard-container {
+      background: white;
+      border: 2px solid black;
+      border-radius: 8px;
+      padding: 16px;
+      width: 800px;
+      max-width: 100%;
+      font-family: 'Courier New', 'Monaco', monospace;
+    }
+    
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid black;
+      padding-bottom: 8px;
+      margin-bottom: 12px;
+    }
+    
+    .header-title {
+      font-size: 14px;
+      font-weight: bold;
+    }
+    
+    .header-date {
+      font-size: 14px;
+    }
+    
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    
+    .card {
+      border: 2px solid black;
+      padding: 8px;
+    }
+    
+    .card-label {
+      font-size: 10px;
+      margin-bottom: 4px;
+    }
+    
+    .card-value {
+      font-size: 20px;
+      font-weight: bold;
+      margin-bottom: 4px;
+    }
+    
+    .card-subtext {
+      font-size: 10px;
+      margin-top: 4px;
+    }
+    
+    .progress-bar {
+      margin-top: 4px;
+      height: 6px;
+      border: 1px solid black;
+      position: relative;
+    }
+    
+    .progress-fill {
+      height: 100%;
+      background: black;
+      width: 62%;
+    }
+    
+    .todos {
+      border: 2px solid black;
+      padding: 8px;
+    }
+    
+    .todos-title {
+      font-size: 10px;
+      font-weight: bold;
+      margin-bottom: 8px;
+    }
+    
+    .todo-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 10px;
+      margin-bottom: 4px;
+    }
+    
+    .todo-checkbox {
+      width: 12px;
+      height: 12px;
+      border: 1px solid black;
+    }
+    
+    .todo-checkbox.checked {
+      border: 2px solid black;
+      background: black;
+    }
+  </style>
+</head>
+<body>
+  <div class="dashboard-container">
+    <!-- Header -->
+    <div class="header">
+      <div class="header-title">PRODUCTIVITY</div>
+      <div class="header-date" id="currentDate"></div>
+    </div>
+    
+    <!-- Grid Layout -->
+    <div class="grid">
+      <!-- Pomodoro -->
+      <div class="card">
+        <div class="card-label">POMODORO</div>
+        <div class="card-value">15m</div>
+        <div class="card-subtext">WORK</div>
+        <div class="card-subtext">Sessions: 4</div>
+      </div>
+      
+      <!-- Goals -->
+      <div class="card">
+        <div class="card-label">DAILY GOALS</div>
+        <div class="card-value">5/8</div>
+        <div class="progress-bar">
+          <div class="progress-fill"></div>
+        </div>
+        <div class="card-subtext">Progress: 62%</div>
+      </div>
+      
+      <!-- Messages -->
+      <div class="card">
+        <div class="card-label">UNREAD</div>
+        <div class="card-value">28</div>
+        <div class="card-subtext">Email: 18</div>
+        <div class="card-subtext">Slack: 10</div>
+      </div>
+      
+      <!-- Deep Work -->
+      <div class="card">
+        <div class="card-label">DEEP WORK</div>
+        <div class="card-value">12.5h</div>
+        <div class="card-subtext">This week</div>
+        <div class="card-subtext">Streak: 5 days</div>
+      </div>
+    </div>
+    
+    <!-- Todos -->
+    <div class="todos">
+      <div class="todos-title">PRIORITY TODO</div>
+      <div class="todo-item">
+        <div class="todo-checkbox"></div>
+        <span>Review API</span>
+      </div>
+      <div class="todo-item">
+        <div class="todo-checkbox checked"></div>
+        <span>Prepare presentation</span>
+      </div>
+      <div class="todo-item">
+        <div class="todo-checkbox"></div>
+        <span>Fix authentication</span>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    // Set current date
+    const now = new Date();
+    const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const dateStr = `${days[now.getDay()]}, ${months[now.getMonth()]} ${now.getDate()}`;
+    document.getElementById('currentDate').textContent = dateStr;
+  </script>
+</body>
+</html>
