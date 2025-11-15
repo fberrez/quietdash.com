@@ -45,6 +45,13 @@ model WaitlistEntry {
   isVerified        Boolean   @default(false)
   verifiedAt        DateTime?
   syncedToResend    Boolean   @default(false)
+
+  // Referral system fields
+  referralCode      String?   @unique // Generated on verification, used to share with others
+  referredBy        String?   // Referral code of the person who referred this user
+  referralCount     Int       @default(0) // Count of verified users referred by this user
+  queuePosition     Int?      // Position in waitlist queue (calculated on join)
+
   createdAt         DateTime  @default(now())
   updatedAt         DateTime  @updatedAt
 

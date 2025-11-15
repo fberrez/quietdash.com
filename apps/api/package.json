@@ -5,7 +5,7 @@
   "scripts": {
     "build": "nest build && pnpm postbuild",
     "postbuild": "printf \"require('./apps/api/src/main');\\n\" > dist/main.js",
-    "dev": "npx prisma migrate dev && nodemon --exec ts-node -r tsconfig-paths/register src/main.ts --watch src --ext ts",
+    "dev": "npx prisma migrate deploy && nodemon --exec ts-node -r tsconfig-paths/register src/main.ts --watch src --ext ts",
     "start": "node dist/main",
     "start:prod": "NODE_ENV=production node dist/main",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\"",

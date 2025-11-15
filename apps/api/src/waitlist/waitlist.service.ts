@@ -6,6 +6,10 @@ import {
   WaitlistResponseDto,
   VerifyResponseDto,
 } from './dto/waitlist-response.dto';
+import {
+  WaitlistStatsDto,
+  ReferralStatsDto,
+} from './dto/waitlist-stats.dto';
 
 @Injectable()
 export class WaitlistService {
@@ -16,7 +20,10 @@ export class WaitlistService {
     private readonly resendService: ResendService,
   ) {}
 
-  async joinWaitlist(email: string): Promise<WaitlistResponseDto> {
+  async joinWaitlist(
+    email: string,
+    referredBy?: string,
+  ): Promise<WaitlistResponseDto> {
     // Check if email already exists
     const existing = await this.prisma.waitlistEntry.findUnique({
       where: { email: email.toLowerCase() },
@@ -40,6 +47,24 @@ export class WaitlistService {
       }
     }
 
+    // Validate referral code if provided
+    if (referredBy) {
+      const referrer = await this.prisma.waitlistEntry.findUnique({
+        where: { referralCode: referredBy },
+      });
+      if (!referrer || !referrer.isVerified) {
+        this.logger.warn(
+          `Invalid or unverified referral code: ${referredBy}`,
+        );
+        // Continue without referral if code is invalid
+        referredBy = undefined;
+      }
+    }
+
+    // Calculate queue position (count of verified + unverified entries + 1)
+    const queuePosition =
+      (await this.prisma.waitlistEntry.count()) + 1;
+
     // Generate verification token
     const verificationToken = randomBytes(32).toString('hex');
 
@@ -48,6 +73,8 @@ export class WaitlistService {
       data: {
         email: email.toLowerCase(),
         verificationToken,
+        referredBy: referredBy || null,
+        queuePosition,
       },
     });
 
@@ -80,14 +107,44 @@ export class WaitlistService {
       };
     }
 
+    // Generate unique referral code
+    const referralCode = this.generateReferralCode();
+
     // Update entry as verified
     await this.prisma.waitlistEntry.update({
       where: { id: entry.id },
       data: {
         isVerified: true,
         verifiedAt: new Date(),
+        referralCode,
       },
     });
+
+    // If user was referred, increment referrer's count
+    if (entry.referredBy) {
+      try {
+        await this.prisma.waitlistEntry.updateMany({
+          where: {
+            referralCode: entry.referredBy,
+            isVerified: true,
+          },
+          data: {
+            referralCount: {
+              increment: 1,
+            },
+          },
+        });
+        this.logger.log(
+          `Incremented referral count for code: ${entry.referredBy}`,
+        );
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error ? error.message : 'Unknown error';
+        this.logger.error(
+          `Failed to increment referral count: ${errorMessage}`,
+        );
+      }
+    }
 
     // Add to Resend audience
     let addedToResend = false;
@@ -125,5 +182,85 @@ export class WaitlistService {
       message: 'Email verified successfully! Welcome to the waitlist.',
       addedToResend,
     };
+  }
+
+  /**
+   * Generate a unique short referral code
+   */
+  private generateReferralCode(): string {
+    // Generate a short, URL-friendly code (8 characters)
+    return randomBytes(4).toString('hex').toUpperCase();
+  }
+
+  /**
+   * Get real-time waitlist statistics
+   */
+  async getStats(): Promise<WaitlistStatsDto> {
+    const [totalSignups, totalVerified, todayStart] = await Promise.all([
+      this.prisma.waitlistEntry.count(),
+      this.prisma.waitlistEntry.count({
+        where: { isVerified: true },
+      }),
+      Promise.resolve(new Date(new Date().setHours(0, 0, 0, 0))),
+    ]);
+
+    const joinedToday = await this.prisma.waitlistEntry.count({
+      where: {
+        createdAt: {
+          gte: todayStart,
+        },
+      },
+    });
+
+    const verificationRate =
+      totalSignups > 0
+        ? Math.round((totalVerified / totalSignups) * 100)
+        : 0;
+
+    return {
+      totalVerified,
+      joinedToday,
+      verificationRate,
+      totalSignups,
+    };
+  }
+
+  /**
+   * Get referral stats for a specific user by verification token
+   */
+  async getReferralStats(
+    verificationToken: string,
+  ): Promise<ReferralStatsDto | null> {
+    const entry = await this.prisma.waitlistEntry.findUnique({
+      where: { verificationToken },
+    });
+
+    if (!entry || !entry.isVerified || !entry.referralCode) {
+      return null;
+    }
+
+    const rewardTier = this.calculateRewardTier(entry.referralCount);
+    const baseUrl = process.env.FRONTEND_URL || 'https://quietdash.com';
+
+    return {
+      email: entry.email,
+      referralCode: entry.referralCode,
+      referralCount: entry.referralCount,
+      queuePosition: entry.queuePosition || 0,
+      rewardTier,
+      referralUrl: `${baseUrl}/?ref=${entry.referralCode}`,
+    };
+  }
+
+  /**
+   * Calculate reward tier based on referral count
+   */
+  private calculateRewardTier(
+    referralCount: number,
+  ): 'none' | 'bronze' | 'silver' | 'gold' {
+    if (referralCount >= 10) return 'gold';
+    if (referralCount >= 5) return 'silver';
+    if (referralCount >= 3) return 'bronze';
+    return 'none';
   }
 }
