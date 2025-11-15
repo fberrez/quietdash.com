@@ -2,8 +2,14 @@ import { Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { ResendService } from './resend.service';
 import { randomBytes } from 'crypto';
-import { WaitlistResponseDto, VerifyResponseDto } from './dto/waitlist-response.dto';
-import { WaitlistStatsDto, ReferralStatsDto } from './dto/waitlist-stats.dto';
+import {
+  WaitlistResponseDto,
+  VerifyResponseDto,
+} from './dto/waitlist-response.dto';
+import {
+  WaitlistStatsDto,
+  ReferralStatsDto,
+} from './dto/waitlist-stats.dto';
 
 @Injectable()
 export class WaitlistService {
@@ -14,7 +20,10 @@ export class WaitlistService {
     private readonly resendService: ResendService,
   ) {}
 
-  async joinWaitlist(email: string, referredBy?: string): Promise<WaitlistResponseDto> {
+  async joinWaitlist(
+    email: string,
+    referredBy?: string,
+  ): Promise<WaitlistResponseDto> {
     // Check if email already exists
     const existing = await this.prisma.waitlistEntry.findUnique({
       where: { email: email.toLowerCase() },
@@ -22,10 +31,15 @@ export class WaitlistService {
 
     if (existing) {
       if (existing.isVerified) {
-        throw new Error("You're already on the waitlist! We'll notify you when we launch.");
+        throw new Error(
+          "You're already on the waitlist! We'll notify you when we launch.",
+        );
       } else {
         // Resend verification email
-        await this.resendService.sendVerificationEmail(email, existing.verificationToken);
+        await this.resendService.sendVerificationEmail(
+          email,
+          existing.verificationToken,
+        );
         return {
           message: 'Verification email resent. Please check your inbox.',
           email: email.toLowerCase(),
@@ -39,14 +53,17 @@ export class WaitlistService {
         where: { referralCode: referredBy },
       });
       if (!referrer || !referrer.isVerified) {
-        this.logger.warn(`Invalid or unverified referral code: ${referredBy}`);
+        this.logger.warn(
+          `Invalid or unverified referral code: ${referredBy}`,
+        );
         // Continue without referral if code is invalid
         referredBy = undefined;
       }
     }
 
     // Calculate queue position (count of verified + unverified entries + 1)
-    const queuePosition = (await this.prisma.waitlistEntry.count()) + 1;
+    const queuePosition =
+      (await this.prisma.waitlistEntry.count()) + 1;
 
     // Generate verification token
     const verificationToken = randomBytes(32).toString('hex');
@@ -117,10 +134,15 @@ export class WaitlistService {
             },
           },
         });
-        this.logger.log(`Incremented referral count for code: ${entry.referredBy}`);
+        this.logger.log(
+          `Incremented referral count for code: ${entry.referredBy}`,
+        );
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-        this.logger.error(`Failed to increment referral count: ${errorMessage}`);
+        const errorMessage =
+          error instanceof Error ? error.message : 'Unknown error';
+        this.logger.error(
+          `Failed to increment referral count: ${errorMessage}`,
+        );
       }
     }
 
@@ -134,8 +156,11 @@ export class WaitlistService {
       });
       addedToResend = true;
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-      this.logger.error(`Failed to add ${entry.email} to Resend: ${errorMessage}`);
+      const errorMessage =
+        error instanceof Error ? error.message : 'Unknown error';
+      this.logger.error(
+        `Failed to add ${entry.email} to Resend: ${errorMessage}`,
+      );
       // Don't fail the verification if Resend fails
     }
 
@@ -143,8 +168,11 @@ export class WaitlistService {
     try {
       await this.resendService.sendWelcomeEmail(entry.email);
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-      this.logger.error(`Failed to send welcome email to ${entry.email}: ${errorMessage}`);
+      const errorMessage =
+        error instanceof Error ? error.message : 'Unknown error';
+      this.logger.error(
+        `Failed to send welcome email to ${entry.email}: ${errorMessage}`,
+      );
       // Don't fail the verification if welcome email fails
     }
 
@@ -185,7 +213,9 @@ export class WaitlistService {
     });
 
     const verificationRate =
-      totalSignups > 0 ? Math.round((totalVerified / totalSignups) * 100) : 0;
+      totalSignups > 0
+        ? Math.round((totalVerified / totalSignups) * 100)
+        : 0;
 
     return {
       totalVerified,
@@ -198,7 +228,9 @@ export class WaitlistService {
   /**
    * Get referral stats for a specific user by verification token
    */
-  async getReferralStats(verificationToken: string): Promise<ReferralStatsDto | null> {
+  async getReferralStats(
+    verificationToken: string,
+  ): Promise<ReferralStatsDto | null> {
     const entry = await this.prisma.waitlistEntry.findUnique({
       where: { verificationToken },
     });
@@ -208,7 +240,7 @@ export class WaitlistService {
     }
 
     const rewardTier = this.calculateRewardTier(entry.referralCount);
-    const baseUrl = 'https://quietdash.com';
+    const baseUrl = process.env.FRONTEND_URL || 'https://quietdash.com';
 
     return {
       email: entry.email,
@@ -223,7 +255,9 @@ export class WaitlistService {
   /**
    * Calculate reward tier based on referral count
    */
-  private calculateRewardTier(referralCount: number): 'none' | 'bronze' | 'silver' | 'gold' {
+  private calculateRewardTier(
+    referralCount: number,
+  ): 'none' | 'bronze' | 'silver' | 'gold' {
     if (referralCount >= 10) return 'gold';
     if (referralCount >= 5) return 'silver';
     if (referralCount >= 3) return 'bronze';
