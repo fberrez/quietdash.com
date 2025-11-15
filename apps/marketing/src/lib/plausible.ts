@@ -18,7 +18,7 @@ declare global {
 }
 
 export type CTASource = 'hero' | 'nav' | 'pricing' | 'sticky' | 'footer';
-export type SharePlatform = 'twitter' | 'linkedin' | 'email' | 'copy';
+export type SharePlatform = 'twitter' | 'bluesky' | 'email' | 'copy';
 
 /**
  * Track when user views the waitlist form section

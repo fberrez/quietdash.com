@@ -22,7 +22,7 @@ export function VerifyPage() {
   const [searchParams] = useSearchParams();
   const token = searchParams.get('token');
   const [loading, setLoading] = useState(true);
-  const [success, setSuccess] = useState(false);
+  const [success, setSuccess] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [addedToResend, setAddedToResend] = useState(false);
   const [referralStats, setReferralStats] = useState<ReferralStats | null>(null);
@@ -102,9 +102,7 @@ export function VerifyPage() {
                     <h2 className="text-xl font-semibold text-green-800 dark:text-green-200">
                       Email Verified!
                     </h2>
-                    <p className="text-muted-foreground">
-                      You're now on the QuietDash waitlist.
-                    </p>
+                    <p className="text-muted-foreground">You're now on the QuietDash waitlist.</p>
                     {referralStats && (
                       <p className="text-sm font-medium text-primary">
                         You're #{referralStats.queuePosition} in line!
