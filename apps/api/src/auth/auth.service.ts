@@ -47,6 +47,15 @@ export class AuthService {
       },
     });
 
+    // Create default dashboard
+    await this.prisma.dashboard.create({
+      data: {
+        userId: user.id,
+        name: 'Default Dashboard',
+        isActive: true,
+      },
+    });
+
     // Generate JWT token
     const accessToken = this.generateToken(user.id, user.email);
 

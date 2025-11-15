@@ -1,16 +1,16 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
+import { Toaster } from './components/ui/sonner';
 import { AuthProvider } from './contexts/AuthContext';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import LoginPage from './pages/auth/LoginPage';
 import RegisterPage from './pages/auth/RegisterPage';
-import DashboardPage from './pages/dashboard/DashboardPage';
+import BackofficePage from './pages/BackofficePage';
 import ApiKeysPage from './pages/api-keys/ApiKeysPage';
-import WidgetsPage from './pages/widgets/WidgetsPage';
-import DisplayPage from './pages/display/DisplayPage';
 
 function App() {
   return (
     <AuthProvider>
+      <Toaster />
       <Routes>
         {/* Public routes */}
         <Route path="/login" element={<LoginPage />} />
@@ -18,10 +18,10 @@ function App() {
 
         {/* Protected routes */}
         <Route
-          path="/dashboard"
+          path="/backoffice"
           element={
             <ProtectedRoute>
-              <DashboardPage />
+              <BackofficePage />
             </ProtectedRoute>
           }
         />
@@ -33,25 +33,9 @@ function App() {
             </ProtectedRoute>
           }
         />
-        <Route
-          path="/widgets"
-          element={
-            <ProtectedRoute>
-              <WidgetsPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/display"
-          element={
-            <ProtectedRoute>
-              <DisplayPage />
-            </ProtectedRoute>
-          }
-        />
 
-        {/* Redirect root to dashboard */}
-        <Route path="/" element={<Navigate to="/dashboard" replace />} />
+        {/* Redirect root to backoffice */}
+        <Route path="/" element={<Navigate to="/backoffice" replace />} />
       </Routes>
     </AuthProvider>
   );

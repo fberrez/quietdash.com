@@ -230,6 +230,73 @@ python3 vitrine_display.py
 - The display retains the image even when powered off (bistable display)
 - First refresh after power-on may take longer
 
+## Standalone Display Scripts
+
+In addition to the API-connected `vitrine_display.py`, there are standalone display scripts that generate content locally without requiring API access:
+
+### Health Dashboard (`health_dashboard_display.py`)
+
+A comprehensive wellness tracker displaying:
+- **Step Counter**: Daily steps, weekly average, goal progress with visual bar
+- **Water Intake**: Glasses consumed vs goal, liters today
+- **Sleep Tracker**: Last night hours, weekly average, sleep score
+- **Workout Streak**: Days in a row, weekly session count
+- **Calorie Tracker**: Daily intake with surplus/deficit indicator
+- **Mood Tracker**: Current mood rating
+
+**Features:**
+- Clean, minimalist B&W design optimized for e-ink
+- 2×3 grid layout with 6 metric boxes
+- Progress bar for steps tracking
+- Text-focused minimalist display
+- Mock data generation (easily replaceable with real data sources)
+
+**Usage:**
+```bash
+python3 health_dashboard_display.py
+```
+
+### Productivity Dashboard (`productivity_dashboard_display.py`)
+
+A comprehensive productivity tracker displaying:
+- **Pomodoro Timer**: Current state (work/break/idle), time remaining, sessions today
+- **Daily Goals**: Completed vs total goals with progress bar
+- **Unread Messages**: Email + Slack count with trend vs yesterday
+- **Deep Work Timer**: Focus hours this week, daily streak, today's hours
+- **Priority Todo List**: Top 3 tasks with checkboxes showing status (pending/in progress/done)
+
+**Features:**
+- Asymmetric layout: Left side (2×2 grid of metrics), Right side (todo list panel)
+- Visual status indicators: checkboxes for todos, progress bars
+- Trend tracking for messages (↑/↓ compared to yesterday)
+- Pomodoro states displayed clearly
+- Mock data generation (integrate with your task management tools)
+
+**Usage:**
+```bash
+python3 productivity_dashboard_display.py
+```
+
+### Morning Routine (`morning_routine_display.py`)
+
+Displays time, weather, calendar events, and daily quote.
+
+**Usage:**
+```bash
+python3 morning_routine_display.py
+```
+
+### Other Standalone Scripts
+
+Additional display scripts for specific use cases:
+- `github_stats_display.py` - GitHub statistics
+- `portfolio_display.py` - Portfolio overview
+- `projects_monitor_display.py` - Project monitoring
+- `train_schedule_display.py` - Train schedules
+- `wordcount_display.py` - Word count tracking
+
+**Note:** These scripts generate mock data by default. To use real data, modify the `generate_*_data()` functions to fetch from your actual data sources (APIs, databases, files, etc.).
+
 ## License
 
 This script is part of the Vitrine.io project.

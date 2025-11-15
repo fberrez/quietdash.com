@@ -8,8 +8,6 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
-      '@vitrine/shared': path.resolve(__dirname, '../../packages/shared/src'),
-      '@vitrine/api-client': path.resolve(__dirname, '../../packages/api-client/src'),
     },
   },
   server: {

@@ -17,9 +17,7 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  apiKeys         ApiKey[]
-  widgetConfigs   WidgetConfig[]
-  displaySettings DisplaySettings?
+  apiKeys ApiKey[]
 
   @@map("users")
 }
@@ -38,34 +36,4 @@ model ApiKey {
 
   @@unique([userId, provider])
   @@map("api_keys")
-}
-
-model WidgetConfig {
-  id        String   @id @default(uuid())
-  userId    String
-  type      String
-  enabled   Boolean  @default(true)
-  position  Json
-  settings  Json     @default("{}")
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@unique([userId, type])
-  @@map("widget_configs")
-}
-
-model DisplaySettings {
-  id              String   @id @default(uuid())
-  userId          String   @unique
-  refreshInterval Int      @default(300) // 5 minutes in seconds
-  brightness      Int      @default(100)
-  orientation     String   @default("landscape")
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@map("display_settings")
 }
