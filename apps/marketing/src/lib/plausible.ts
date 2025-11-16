@@ -43,12 +43,12 @@ export function trackWaitlistCTAClicked(source: CTASource) {
 
 /**
  * Track when user submits the waitlist form
- * @param experimentVariant - Optional A/B test variant identifier
+ * @param experimentVariants - Optional object mapping experiment names to their variants
  */
-export function trackWaitlistFormSubmitted(experimentVariant?: string) {
+export function trackWaitlistFormSubmitted(experimentVariants?: Record<string, string>) {
   if (typeof window.plausible !== 'undefined') {
     window.plausible('Waitlist Form Submitted', {
-      props: experimentVariant ? { variant: experimentVariant } : undefined
+      props: experimentVariants || undefined
     });
   }
 }

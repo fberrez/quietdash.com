@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { ArrowRight, Loader2, CheckCircle2, AlertCircle, Users, TrendingUp, Clock } from 'lucide-react';
-import { getHeadlineCopy, getCTAButtonCopy, shouldShowCountdown } from '@/lib/experiments';
+import { getHeadlineCopy, getCTAButtonCopy, shouldShowCountdown, getActiveExperiments } from '@/lib/experiments';
 import {
   trackWaitlistFormViewed,
   trackWaitlistFormSubmitted,
@@ -154,8 +154,13 @@ export function FinalCTA() {
         throw new Error(data.message || 'Something went wrong. Please try again.');
       }
 
-      // Track successful submission
-      trackWaitlistFormSubmitted();
+      // Track successful submission with experiment variants
+      const activeExperiments = getActiveExperiments();
+      const experimentVariants = activeExperiments.reduce((acc, exp) => {
+        acc[exp.name] = exp.variant;
+        return acc;
+      }, {} as Record<string, string>);
+      trackWaitlistFormSubmitted(experimentVariants);
 
       setSuccess(true);
       setEmail('');
