@@ -121,7 +121,7 @@ export function getHeadlineCopy(): string {
 
   switch (variant) {
     case 'variant_a':
-      return 'Lock in €20 Discount - Limited Early Access';
+      return 'Lock in Early Bird Discount - Limited Early Access';
     case 'control':
     default:
       return 'First 100 backers get early access';
@@ -138,7 +138,7 @@ export function getCTAButtonCopy(): string {
     case 'variant_a':
       return 'Claim My Early Bird Discount';
     case 'variant_b':
-      return 'Get €20 Off + Early Access';
+      return 'Get Early Bird Discount + Early Access';
     case 'control':
     default:
       return 'Reserve Your Spot';

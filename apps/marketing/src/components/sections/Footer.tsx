@@ -17,8 +17,8 @@ export function Footer() {
               <div className="text-2xl font-bold">quietdash.com</div>
             </div>
             <p className="text-sm text-muted-foreground max-w-sm">
-              Open-source e-ink dashboard system for Raspberry Pi. Transform your space
-              with beautiful, distraction-free information displays.
+              Open-source e-ink dashboard system for Raspberry Pi. Transform your space with
+              beautiful, distraction-free information displays.
             </p>
             <div className="flex gap-4">
               <a
@@ -40,7 +40,7 @@ export function Footer() {
                 <BlueskyIcon />
               </a>
               <a
-                href="mailto:contact@quietdash.com"
+                href="mailto:hello@quietdash.com"
                 className="rounded-lg bg-muted p-2 text-muted-foreground transition-colors hover:bg-primary hover:text-primary-foreground"
                 aria-label="Email"
               >
@@ -53,11 +53,10 @@ export function Footer() {
         {/* Bottom Bar */}
         <div className="mt-12 border-t pt-8 flex flex-col sm:flex-row justify-between items-center gap-4">
           <p className="text-xs text-muted-foreground">
-            © {new Date().getFullYear()} quietdash.com. All rights reserved. Built with ❤️ by the community.
+            © {new Date().getFullYear()} quietdash.com. All rights reserved. Built with ❤️ by the
+            community.
           </p>
-          <p className="text-xs text-muted-foreground">
-            Made with open-source technologies
-          </p>
+          <p className="text-xs text-muted-foreground">Made with open-source technologies</p>
         </div>
       </div>
     </footer>

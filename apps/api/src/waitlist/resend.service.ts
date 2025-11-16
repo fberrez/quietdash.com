@@ -17,7 +17,7 @@ export class ResendService {
     this.resend = new Resend(apiKey);
     this.audienceId = this.configService.get<string>('RESEND_AUDIENCE_ID');
     this.marketingUrl = this.configService.get<string>('MARKETING_URL');
-    this.fromEmail = 'QuietDash <hello@quietdash.com>';
+    this.fromEmail = 'Florent from QuietDash <hello@quietdash.com>';
   }
 
   async sendVerificationEmail(email: string, token: string): Promise<void> {

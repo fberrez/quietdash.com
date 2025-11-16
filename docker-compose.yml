@@ -11,6 +11,12 @@ services:
       POSTGRES_USER: quietdash
       POSTGRES_PASSWORD: quietdash_password
       POSTGRES_DB: quietdash_db
+    command:
+      - "postgres"
+      - "-c"
+      - "log_min_messages=warning"
+      - "-c"
+      - "log_checkpoints=off"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:

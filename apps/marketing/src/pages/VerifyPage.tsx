@@ -157,7 +157,7 @@ export function VerifyPage() {
                     </li>
                     <li className="flex items-start gap-2">
                       <span className="text-green-500 mt-0.5">✓</span>
-                      <span>Exclusive early backer benefits (€20 discount + more)</span>
+                      <span>Exclusive early backer benefits (early bird discount + more)</span>
                     </li>
                     {addedToResend && (
                       <li className="flex items-start gap-2">
