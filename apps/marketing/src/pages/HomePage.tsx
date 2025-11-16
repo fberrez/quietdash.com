@@ -1,4 +1,5 @@
 import { Navigation } from '@/components/Navigation';
+import { FloatingCTA } from '@/components/FloatingCTA';
 import { Hero } from '@/components/sections/Hero';
 import { Problem } from '@/components/sections/Problem';
 import { HowItWorks } from '@/components/sections/HowItWorks';
@@ -30,6 +31,7 @@ export function HomePage() {
         <FinalCTA />
       </main>
       <Footer />
+      <FloatingCTA />
     </div>
   );
 }

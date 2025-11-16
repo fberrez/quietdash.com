@@ -1,6 +1,7 @@
 import { Card, CardContent } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Star } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Star, ArrowRight } from 'lucide-react';
 
 const testimonials = [
   {
@@ -105,7 +106,11 @@ const TestimonialCard = ({ testimonial }: { testimonial: (typeof testimonials)[0
       {/* Rating */}
       <div className="flex gap-1">
         {Array.from({ length: testimonial.rating }).map((_, i) => (
-          <Star key={i} className="h-3 w-3 lg:h-4 lg:w-4" style={{ fill: '#E17100', color: '#E17100' }} />
+          <Star
+            key={i}
+            className="h-3 w-3 lg:h-4 lg:w-4"
+            style={{ fill: '#E17100', color: '#E17100' }}
+          />
         ))}
       </div>
 
@@ -137,18 +142,28 @@ const TestimonialCard = ({ testimonial }: { testimonial: (typeof testimonials)[0
                   {testimonial.username}
                 </a>
               ) : (
-                <span className="text-xs lg:text-sm font-semibold leading-tight truncate">{testimonial.username}</span>
+                <span className="text-xs lg:text-sm font-semibold leading-tight truncate">
+                  {testimonial.username}
+                </span>
               )}
-              <span className="text-[10px] lg:text-xs text-muted-foreground mt-0.5 truncate">{testimonial.name}</span>
+              <span className="text-[10px] lg:text-xs text-muted-foreground mt-0.5 truncate">
+                {testimonial.name}
+              </span>
               {testimonial.role && (
-                <span className="text-[10px] lg:text-xs text-muted-foreground truncate">{testimonial.role}</span>
+                <span className="text-[10px] lg:text-xs text-muted-foreground truncate">
+                  {testimonial.role}
+                </span>
               )}
             </>
           ) : (
             <>
-              <span className="text-xs lg:text-sm font-semibold leading-tight truncate">{testimonial.name}</span>
+              <span className="text-xs lg:text-sm font-semibold leading-tight truncate">
+                {testimonial.name}
+              </span>
               {testimonial.role && (
-                <span className="text-[10px] lg:text-xs text-muted-foreground mt-0.5 truncate">{testimonial.role}</span>
+                <span className="text-[10px] lg:text-xs text-muted-foreground mt-0.5 truncate">
+                  {testimonial.role}
+                </span>
               )}
             </>
           )}
@@ -205,23 +220,39 @@ export function Testimonials() {
         <div className="mt-16 text-center space-y-4">
           <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-8 text-sm">
             <div>
-              <span className="font-bold text-xl sm:text-2xl">1,080</span>
+              <span className="font-bold text-xl sm:text-2xl">2,388+</span>
               <span className="text-muted-foreground ml-1 text-xs sm:text-sm">total upvotes</span>
             </div>
             <div>
-              <span className="font-bold text-xl sm:text-2xl">120k+</span>
+              <span className="font-bold text-xl sm:text-2xl">347k+</span>
               <span className="text-muted-foreground ml-1 text-xs sm:text-sm">views</span>
             </div>
             <div>
-              <span className="font-bold text-xl sm:text-2xl">150+</span>
+              <span className="font-bold text-xl sm:text-2xl">230+</span>
               <span className="text-muted-foreground ml-1 text-xs sm:text-sm">comments</span>
             </div>
             <div>
               <span className="font-bold text-xl sm:text-2xl">97%</span>
-              <span className="text-muted-foreground ml-1 text-xs sm:text-sm">avg. upvote ratio</span>
+              <span className="text-muted-foreground ml-1 text-xs sm:text-sm">
+                avg. upvote ratio
+              </span>
             </div>
           </div>
           <p className="text-xs text-muted-foreground italic">From Reddit and Bluesky.</p>
+        </div>
+
+        {/* CTA */}
+        <div className="pt-12 flex justify-center px-4">
+          <Button
+            size="lg"
+            className="text-base w-full sm:w-auto min-h-[44px] sm:min-h-0 group"
+            asChild
+          >
+            <a href="#waitlist">
+              Join the Waitlist
+              <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+            </a>
+          </Button>
         </div>
       </div>
     </section>

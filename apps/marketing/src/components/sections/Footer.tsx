@@ -37,7 +37,7 @@ export function Footer() {
                 <Github className="h-5 w-5" />
               </a>
               <a
-                href="https://www.reddit.com/r/quietdash"
+                href="https://www.reddit.com/r/QuietDash"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="rounded-lg bg-muted p-2 text-muted-foreground transition-colors hover:bg-primary hover:text-primary-foreground"
@@ -71,7 +71,9 @@ export function Footer() {
             © {new Date().getFullYear()} quietdash.com. All rights reserved. Built with ❤️ by the
             community.
           </p>
-          <p className="text-xs text-muted-foreground whitespace-nowrap">Made with open-source technologies</p>
+          <p className="text-xs text-muted-foreground whitespace-nowrap">
+            Made with open-source technologies
+          </p>
         </div>
       </div>
     </footer>

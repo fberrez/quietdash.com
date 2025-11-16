@@ -44,18 +44,30 @@ export function Navigation() {
           {/* Right Side Actions */}
           <div className="flex items-center gap-2 sm:gap-4 flex-shrink-0">
             <Button variant="ghost" size="sm" className="hidden sm:flex" asChild>
-              <a href="https://www.reddit.com/r/quietdash/" target="_blank" rel="noopener noreferrer">
+              <a
+                href="https://www.reddit.com/r/QuietDash/"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 <RedditIcon />
                 <span className="ml-2">Reddit</span>
               </a>
             </Button>
             <Button variant="ghost" size="sm" className="hidden sm:flex" asChild>
-              <a href="https://github.com/fberrez/quietdash.com" target="_blank" rel="noopener noreferrer">
+              <a
+                href="https://github.com/fberrez/quietdash.com"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 <Github className="mr-2 h-4 w-4" />
                 GitHub
               </a>
             </Button>
-            <Button size="sm" className="whitespace-nowrap" asChild>
+            <Button
+              size="sm"
+              className="whitespace-nowrap min-h-[44px] sm:min-h-0 text-sm sm:text-sm font-semibold"
+              asChild
+            >
               <a href="#waitlist">Join Waitlist</a>
             </Button>
           </div>

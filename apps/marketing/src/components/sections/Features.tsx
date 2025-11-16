@@ -1,6 +1,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Bell, Zap, Shield, CircleSlash } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Bell, Zap, Shield, CircleSlash, ArrowRight } from 'lucide-react';
 
 const features = [
   {
@@ -73,6 +74,16 @@ export function Features() {
               </Card>
             );
           })}
+        </div>
+
+        {/* CTA */}
+        <div className="pt-12 flex justify-center px-4">
+          <Button size="lg" className="text-base w-full sm:w-auto min-h-[44px] sm:min-h-0 group" asChild>
+            <a href="#waitlist">
+              Join the Waitlist
+              <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+            </a>
+          </Button>
         </div>
       </div>
     </section>

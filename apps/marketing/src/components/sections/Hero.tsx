@@ -22,13 +22,13 @@ export function Hero() {
             </div>
 
             <div className="flex flex-col gap-4 sm:flex-row">
-              <Button size="lg" className="text-base group" asChild>
+              <Button size="lg" className="text-base group min-h-[44px] sm:min-h-0 w-full sm:w-auto" asChild>
                 <a href="#waitlist">
                   Join the Waitlist
                   <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
                 </a>
               </Button>
-              <Button size="lg" variant="outline" className="text-base" asChild>
+              <Button size="lg" variant="outline" className="text-base min-h-[44px] sm:min-h-0 w-full sm:w-auto" asChild>
                 <a href="#how-it-works">
                   See How It Works
                 </a>

@@ -1,4 +1,6 @@
 import { useScrollFadeIn } from '@/hooks/useScrollFadeIn';
+import { Button } from '@/components/ui/button';
+import { ArrowRight } from 'lucide-react';
 
 type ChartData = {
   title: string;
@@ -252,6 +254,16 @@ export function Problem() {
             <ScreenTimeScreenshot delay={0} chartIndex={0} />
             <ScreenTimeScreenshot delay={150} chartIndex={1} />
             <ScreenTimeScreenshot delay={300} chartIndex={2} />
+          </div>
+
+          {/* CTA */}
+          <div className="pt-12 flex justify-center px-4">
+            <Button size="lg" className="text-base w-full sm:w-auto min-h-[44px] sm:min-h-0 group" asChild>
+              <a href="#waitlist">
+                Join the Waitlist
+                <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+              </a>
+            </Button>
           </div>
         </div>
       </div>
