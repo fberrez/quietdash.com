@@ -80,7 +80,7 @@ function ScreenTimeScreenshot({ delay = 0, chartIndex = 0 }: { delay?: number; c
       }`}
       style={{ transitionDelay: `${delay}ms` }}
     >
-      <div className="relative mx-auto max-w-[280px] h-full rounded-[2.5rem] bg-black p-2 shadow-2xl flex flex-col">
+      <div className="relative mx-auto w-full max-w-[280px] h-full rounded-[2.5rem] bg-black p-2 shadow-2xl flex flex-col">
         {/* iPhone notch */}
         <div className="absolute left-1/2 top-0 h-6 w-32 -translate-x-1/2 rounded-b-3xl bg-black" />
         
@@ -248,7 +248,7 @@ export function Problem() {
           </div>
 
           {/* iOS Screen Time Screenshots */}
-          <div className="pt-16 grid gap-8 sm:grid-cols-2 lg:grid-cols-3 max-w-5xl mx-auto items-stretch">
+          <div className="pt-16 grid gap-6 sm:gap-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 max-w-5xl mx-auto items-stretch px-4 sm:px-0">
             <ScreenTimeScreenshot delay={0} chartIndex={0} />
             <ScreenTimeScreenshot delay={150} chartIndex={1} />
             <ScreenTimeScreenshot delay={300} chartIndex={2} />

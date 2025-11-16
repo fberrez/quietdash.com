@@ -67,13 +67,13 @@ export function Pricing() {
           </p>
         </div>
 
-        <div className="grid gap-8 lg:grid-cols-3 lg:gap-6 max-w-6xl mx-auto">
+        <div className="grid gap-8 lg:grid-cols-3 lg:gap-6 max-w-6xl mx-auto px-4 sm:px-0">
           {plans.map((plan, index) => (
             <Card
               key={index}
               className={`relative overflow-hidden transition-all ${
                 plan.highlighted
-                  ? 'border-primary shadow-xl scale-105 lg:scale-110'
+                  ? 'border-primary shadow-xl lg:scale-105'
                   : 'border-2 hover:border-primary/50'
               }`}
             >

@@ -203,36 +203,36 @@ export function FinalCTA() {
 
             {/* Countdown Timer (A/B Test) */}
             {showCountdown && timeLeft && (
-              <div className="flex justify-center pt-4 animate-in fade-in duration-500 delay-200">
-                <div className="inline-flex items-center gap-4 px-6 py-4 rounded-lg bg-gradient-to-r from-primary/10 to-primary/5 border border-primary/20">
-                  <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
-                    <Clock className="h-4 w-4 text-primary" />
+              <div className="flex justify-center pt-4 animate-in fade-in duration-500 delay-200 px-4">
+                <div className="inline-flex flex-col sm:flex-row items-center gap-3 sm:gap-4 px-4 sm:px-6 py-4 rounded-lg bg-gradient-to-r from-primary/10 to-primary/5 border border-primary/20 w-full sm:w-auto max-w-full">
+                  <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground whitespace-nowrap">
+                    <Clock className="h-4 w-4 text-primary flex-shrink-0" />
                     <span>Pre-orders open in:</span>
                   </div>
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-2 sm:gap-3">
                     <div className="text-center">
-                      <div className="text-2xl font-bold tabular-nums text-foreground">
+                      <div className="text-xl sm:text-2xl font-bold tabular-nums text-foreground">
                         {timeLeft.days}
                       </div>
                       <div className="text-xs text-muted-foreground">days</div>
                     </div>
-                    <span className="text-xl text-muted-foreground">:</span>
+                    <span className="text-lg sm:text-xl text-muted-foreground">:</span>
                     <div className="text-center">
-                      <div className="text-2xl font-bold tabular-nums text-foreground">
+                      <div className="text-xl sm:text-2xl font-bold tabular-nums text-foreground">
                         {String(timeLeft.hours).padStart(2, '0')}
                       </div>
                       <div className="text-xs text-muted-foreground">hours</div>
                     </div>
-                    <span className="text-xl text-muted-foreground">:</span>
+                    <span className="text-lg sm:text-xl text-muted-foreground">:</span>
                     <div className="text-center">
-                      <div className="text-2xl font-bold tabular-nums text-foreground">
+                      <div className="text-xl sm:text-2xl font-bold tabular-nums text-foreground">
                         {String(timeLeft.minutes).padStart(2, '0')}
                       </div>
                       <div className="text-xs text-muted-foreground">mins</div>
                     </div>
-                    <span className="text-xl text-muted-foreground">:</span>
+                    <span className="text-lg sm:text-xl text-muted-foreground">:</span>
                     <div className="text-center">
-                      <div className="text-2xl font-bold tabular-nums text-foreground">
+                      <div className="text-xl sm:text-2xl font-bold tabular-nums text-foreground">
                         {String(timeLeft.seconds).padStart(2, '0')}
                       </div>
                       <div className="text-xs text-muted-foreground">secs</div>
@@ -244,19 +244,19 @@ export function FinalCTA() {
 
             {/* Real-time Stats */}
             {!statsLoading && stats && stats.totalVerified > 0 && (
-              <div className="flex items-center justify-center gap-6 text-sm text-muted-foreground pt-2 animate-in fade-in duration-500 delay-300">
+              <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-6 text-sm text-muted-foreground pt-2 animate-in fade-in duration-500 delay-300 px-4">
                 <div className="flex items-center gap-2">
-                  <Users className="h-4 w-4 text-primary" />
+                  <Users className="h-4 w-4 text-primary flex-shrink-0" />
                   <span className="font-semibold text-foreground">{stats.totalVerified}</span>
-                  <span>verified early backers</span>
+                  <span className="whitespace-nowrap">verified early backers</span>
                 </div>
                 {stats.joinedToday > 0 && (
                   <>
-                    <span className="text-muted-foreground/50">•</span>
+                    <span className="text-muted-foreground/50 hidden sm:inline">•</span>
                     <div className="flex items-center gap-2">
-                      <TrendingUp className="h-4 w-4 text-green-500" />
+                      <TrendingUp className="h-4 w-4 text-green-500 flex-shrink-0" />
                       <span className="font-semibold text-foreground">{stats.joinedToday}</span>
-                      <span>joined today</span>
+                      <span className="whitespace-nowrap">joined today</span>
                     </div>
                   </>
                 )}
@@ -362,24 +362,24 @@ export function FinalCTA() {
           </div>
 
           {/* Trust Indicators */}
-          <div className="pt-8 flex items-center justify-center gap-6 text-xs text-muted-foreground flex-wrap border-t pt-8 max-w-2xl mx-auto">
+          <div className="pt-8 flex items-center justify-center gap-4 sm:gap-6 text-xs text-muted-foreground flex-wrap border-t pt-8 max-w-2xl mx-auto px-4">
             <div className="flex items-center gap-2">
-              <svg className="h-4 w-4 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+              <svg className="h-4 w-4 text-green-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                 <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
               </svg>
-              <span>GDPR-compliant EU hosting</span>
+              <span className="whitespace-nowrap">GDPR-compliant EU hosting</span>
             </div>
             <div className="flex items-center gap-2">
-              <svg className="h-4 w-4 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+              <svg className="h-4 w-4 text-green-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                 <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
               </svg>
-              <span>Open-source software (MIT)</span>
+              <span className="whitespace-nowrap">Open-source software (MIT)</span>
             </div>
             <div className="flex items-center gap-2">
-              <svg className="h-4 w-4 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+              <svg className="h-4 w-4 text-green-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                 <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
               </svg>
-              <span>No VC funding, no growth-at-all-costs</span>
+              <span className="text-center sm:text-left">No VC funding, no growth-at-all-costs</span>
             </div>
           </div>
         </div>

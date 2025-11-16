@@ -14,9 +14,9 @@ import { Footer } from '@/components/sections/Footer';
 
 export function HomePage() {
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen overflow-x-hidden">
       <Navigation />
-      <main>
+      <main className="overflow-x-hidden">
         <Hero />
         <Problem />
         <HowItWorks />

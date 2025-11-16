@@ -99,28 +99,28 @@ const testimonials = [
 ];
 
 const TestimonialCard = ({ testimonial }: { testimonial: (typeof testimonials)[0] }) => (
-  <Card className="group relative overflow-hidden border bg-card/50 backdrop-blur transition-all hover:shadow-xl hover:border-primary/20 flex flex-col h-[320px] w-[350px] sm:w-[400px] shrink-0">
+  <Card className="group relative overflow-hidden border bg-card/50 backdrop-blur transition-all hover:shadow-xl hover:border-primary/20 flex flex-col h-full w-full lg:h-[320px] lg:w-[400px] lg:shrink-0">
     <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-    <CardContent className="relative p-6 flex flex-col flex-1 space-y-4">
+    <CardContent className="relative p-4 lg:p-6 flex flex-col flex-1 space-y-3 lg:space-y-4">
       {/* Rating */}
       <div className="flex gap-1">
         {Array.from({ length: testimonial.rating }).map((_, i) => (
-          <Star key={i} className="h-4 w-4" style={{ fill: '#E17100', color: '#E17100' }} />
+          <Star key={i} className="h-3 w-3 lg:h-4 lg:w-4" style={{ fill: '#E17100', color: '#E17100' }} />
         ))}
       </div>
 
       {/* Quote */}
-      <blockquote className="text-base text-foreground leading-relaxed flex-1 font-medium">
+      <blockquote className="text-sm lg:text-base text-foreground leading-relaxed flex-1 font-medium">
         "{testimonial.quote}"
       </blockquote>
 
       {/* Author */}
-      <div className="flex items-center gap-3 pt-4 border-t">
-        <Avatar className="h-10 w-10 shrink-0 ring-2 ring-background">
+      <div className="flex items-center gap-2 lg:gap-3 pt-3 lg:pt-4 border-t">
+        <Avatar className="h-8 w-8 lg:h-10 lg:w-10 shrink-0 ring-2 ring-background">
           {testimonial.avatar && (
             <AvatarImage src={testimonial.avatar} alt={testimonial.username || testimonial.name} />
           )}
-          <AvatarFallback className="bg-primary/10 text-primary font-semibold">
+          <AvatarFallback className="bg-primary/10 text-primary font-semibold text-xs lg:text-sm">
             {testimonial.initials}
           </AvatarFallback>
         </Avatar>
@@ -132,23 +132,23 @@ const TestimonialCard = ({ testimonial }: { testimonial: (typeof testimonials)[0
                   href={testimonial.link}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-sm font-semibold hover:text-primary transition-colors leading-tight"
+                  className="text-xs lg:text-sm font-semibold hover:text-primary transition-colors leading-tight truncate"
                 >
                   {testimonial.username}
                 </a>
               ) : (
-                <span className="text-sm font-semibold leading-tight">{testimonial.username}</span>
+                <span className="text-xs lg:text-sm font-semibold leading-tight truncate">{testimonial.username}</span>
               )}
-              <span className="text-xs text-muted-foreground mt-0.5">{testimonial.name}</span>
+              <span className="text-[10px] lg:text-xs text-muted-foreground mt-0.5 truncate">{testimonial.name}</span>
               {testimonial.role && (
-                <span className="text-xs text-muted-foreground">{testimonial.role}</span>
+                <span className="text-[10px] lg:text-xs text-muted-foreground truncate">{testimonial.role}</span>
               )}
             </>
           ) : (
             <>
-              <span className="text-sm font-semibold leading-tight">{testimonial.name}</span>
+              <span className="text-xs lg:text-sm font-semibold leading-tight truncate">{testimonial.name}</span>
               {testimonial.role && (
-                <span className="text-xs text-muted-foreground mt-0.5">{testimonial.role}</span>
+                <span className="text-[10px] lg:text-xs text-muted-foreground mt-0.5 truncate">{testimonial.role}</span>
               )}
             </>
           )}
@@ -159,7 +159,7 @@ const TestimonialCard = ({ testimonial }: { testimonial: (typeof testimonials)[0
 );
 
 export function Testimonials() {
-  // Duplicate testimonials for seamless loop
+  // Duplicate testimonials for seamless loop on desktop
   const duplicatedTestimonials = [...testimonials, ...testimonials];
 
   return (
@@ -175,7 +175,18 @@ export function Testimonials() {
           </p>
         </div>
 
-        <div className="relative overflow-hidden">
+        {/* Mobile Grid Layout */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:hidden">
+          {testimonials.map((testimonial, index) => (
+            <TestimonialCard
+              key={`${index}-${testimonial.username || testimonial.name}`}
+              testimonial={testimonial}
+            />
+          ))}
+        </div>
+
+        {/* Desktop Marquee Layout */}
+        <div className="relative overflow-hidden hidden lg:block">
           {/* Gradient fade on left */}
           <div className="absolute left-0 top-0 bottom-0 w-40 bg-gradient-to-r from-muted/30 via-muted/20 to-transparent z-10 pointer-events-none" />
           {/* Gradient fade on right */}
@@ -192,22 +203,22 @@ export function Testimonials() {
 
         {/* Social Proof Counter */}
         <div className="mt-16 text-center space-y-4">
-          <div className="flex flex-wrap items-center justify-center gap-8 text-sm">
+          <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-8 text-sm">
             <div>
-              <span className="font-bold text-2xl">1,080</span>
-              <span className="text-muted-foreground ml-1">total upvotes</span>
+              <span className="font-bold text-xl sm:text-2xl">1,080</span>
+              <span className="text-muted-foreground ml-1 text-xs sm:text-sm">total upvotes</span>
             </div>
             <div>
-              <span className="font-bold text-2xl">120k+</span>
-              <span className="text-muted-foreground ml-1">views</span>
+              <span className="font-bold text-xl sm:text-2xl">120k+</span>
+              <span className="text-muted-foreground ml-1 text-xs sm:text-sm">views</span>
             </div>
             <div>
-              <span className="font-bold text-2xl">150+</span>
-              <span className="text-muted-foreground ml-1">comments</span>
+              <span className="font-bold text-xl sm:text-2xl">150+</span>
+              <span className="text-muted-foreground ml-1 text-xs sm:text-sm">comments</span>
             </div>
             <div>
-              <span className="font-bold text-2xl">97%</span>
-              <span className="text-muted-foreground ml-1">avg. upvote ratio</span>
+              <span className="font-bold text-xl sm:text-2xl">97%</span>
+              <span className="text-muted-foreground ml-1 text-xs sm:text-sm">avg. upvote ratio</span>
             </div>
           </div>
           <p className="text-xs text-muted-foreground italic">From Reddit and Bluesky.</p>

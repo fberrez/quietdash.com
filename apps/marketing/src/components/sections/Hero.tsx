@@ -35,39 +35,39 @@ export function Hero() {
               </Button>
             </div>
 
-            <div className="flex items-center gap-6 text-sm text-muted-foreground">
+            <div className="flex flex-wrap items-center gap-3 sm:gap-6 text-sm text-muted-foreground">
               <div className="flex items-center gap-2">
-                <svg className="h-5 w-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                <svg className="h-5 w-5 text-green-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                 </svg>
-                <span>Open Source</span>
+                <span className="whitespace-nowrap">Open Source</span>
               </div>
               <div className="flex items-center gap-2">
-                <svg className="h-5 w-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                <svg className="h-5 w-5 text-green-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                 </svg>
-                <span>Privacy-First</span>
+                <span className="whitespace-nowrap">Privacy-First</span>
               </div>
               <div className="flex items-center gap-2">
-                <svg className="h-5 w-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                <svg className="h-5 w-5 text-green-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                 </svg>
-                <span>Self-Hosted</span>
+                <span className="whitespace-nowrap">Self-Hosted</span>
               </div>
             </div>
           </div>
 
           {/* Dashboard Carousel */}
-          <div className="relative">
+          <div className="relative overflow-hidden">
             <div className="aspect-[4/3] rounded-xl border-2 border-muted-foreground/25 bg-muted/50 p-3 sm:p-6 flex items-center justify-center shadow-lg">
               <div className="w-full h-full">
                 <DashboardCarousel />
               </div>
             </div>
 
-            {/* Decorative blur effect */}
-            <div className="absolute -z-10 -top-24 -right-24 h-96 w-96 rounded-full bg-primary/10 blur-3xl" />
-            <div className="absolute -z-10 -bottom-24 -left-24 h-96 w-96 rounded-full bg-accent/10 blur-3xl" />
+            {/* Decorative blur effect - hidden on mobile to prevent overflow */}
+            <div className="hidden md:block absolute -z-10 -top-24 -right-24 h-96 w-96 rounded-full bg-primary/10 blur-3xl" />
+            <div className="hidden md:block absolute -z-10 -bottom-24 -left-24 h-96 w-96 rounded-full bg-accent/10 blur-3xl" />
           </div>
         </div>
       </div>
