@@ -59,8 +59,8 @@ export function Hero() {
 
           {/* Dashboard Carousel */}
           <div className="relative">
-            <div className="aspect-[4/3] rounded-xl border-2 border-muted-foreground/25 bg-muted/50 p-6 flex items-center justify-center shadow-lg">
-              <div className="w-full h-full max-w-lg">
+            <div className="aspect-[4/3] rounded-xl border-2 border-muted-foreground/25 bg-muted/50 p-3 sm:p-6 flex items-center justify-center shadow-lg">
+              <div className="w-full h-full">
                 <DashboardCarousel />
               </div>
             </div>

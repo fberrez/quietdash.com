@@ -30,7 +30,7 @@ function getCurrentDateLong(): string {
 export function DashboardMockup({ type, className = '' }: DashboardMockupProps) {
   return (
     <div className={`bg-white border-2 border-black rounded-lg overflow-hidden shadow-inner ${className}`} style={{ aspectRatio: '800/480' }}>
-      <div className="h-full w-full scale-90 origin-center">
+      <div className="h-full w-full scale-75 sm:scale-90 origin-center">
         {type === 'productivity' && <ProductivityDashboard />}
         {type === 'health' && <HealthDashboard />}
         {type === 'github' && <GitHubDashboard />}

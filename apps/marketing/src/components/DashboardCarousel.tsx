@@ -38,17 +38,17 @@ export function DashboardCarousel() {
   }, []);
 
   return (
-    <div className="relative w-full h-full">
+    <div className="flex flex-col gap-3 w-full h-full">
       <div
-        className={`w-full h-full transition-opacity duration-500 ease-in-out ${
+        className={`w-full flex-1 transition-opacity duration-500 ease-in-out ${
           isVisible ? 'opacity-100' : 'opacity-0'
         }`}
       >
         <DashboardMockup type={dashboardTypes[currentIndex]} className="w-full h-full" />
       </div>
 
-      {/* Indicator dots */}
-      <div className="absolute bottom-3 left-1/2 transform -translate-x-1/2 flex gap-1.5 z-10">
+      {/* Indicator dots - positioned outside the image */}
+      <div className="flex justify-center gap-1.5 pb-1">
         {dashboardTypes.map((_, index) => (
           <div
             key={index}
