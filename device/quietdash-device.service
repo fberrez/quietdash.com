@@ -1,0 +1,16 @@
+[Unit]
+Description=QuietDash e-ink device client
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+# Adjust paths/user to your install. EnvironmentFile holds SERVER_URL + token.
+WorkingDirectory=/home/pi/quietdash/device
+EnvironmentFile=/home/pi/quietdash/device/.env
+ExecStart=/usr/bin/python3 /home/pi/quietdash/device/quietdash_device.py
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

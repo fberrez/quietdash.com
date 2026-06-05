@@ -1,0 +1,82 @@
+@import "tailwindcss";
+
+/*
+  QuietDash studio — same design system as the marketing site (DESIGN.md):
+  calm paper / honest indie. Warm off-white paper, one warm ink, a brick accent
+  used sparingly, e-ink halftone motif. OKLCH throughout, no pure #000 / #fff.
+  Ported to Tailwind v4 @theme tokens.
+*/
+@theme {
+  --color-paper: oklch(0.972 0.007 76);
+  --color-paper-sunk: oklch(0.945 0.009 76);
+  --color-card: oklch(0.985 0.006 76);
+  --color-ink: oklch(0.245 0.014 58);
+  --color-ink-soft: oklch(0.52 0.013 58);
+  --color-brick: oklch(0.56 0.158 36);
+  --color-brick-deep: oklch(0.47 0.15 34);
+  --color-brick-light: oklch(0.68 0.13 40);
+  --color-line: oklch(0.885 0.012 76);
+  --color-destructive: oklch(0.55 0.2 27);
+
+  --font-display: "Bricolage Grotesque Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Hanken Grotesk Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "Martian Mono Variable", ui-monospace, monospace;
+}
+
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  body {
+    background-color: var(--color-paper);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-synthesis-weight: none;
+  }
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+  }
+  ::selection {
+    background-color: oklch(0.56 0.158 36 / 0.22);
+  }
+}
+
+@layer utilities {
+  /* small technical label / kicker — uppercase tracked mono */
+  .label {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+
+  /* e-ink halftone dot field — the signature motif */
+  .halftone {
+    background-image: radial-gradient(oklch(0.245 0.014 58 / 0.9) 1px, transparent 1.6px);
+    background-size: 7px 7px;
+  }
+  .halftone-brick {
+    background-image: radial-gradient(oklch(0.56 0.158 36 / 0.85) 1px, transparent 1.7px);
+    background-size: 8px 8px;
+  }
+  .halftone-fade-radial {
+    -webkit-mask-image: radial-gradient(ellipse at center, black, transparent 72%);
+    mask-image: radial-gradient(ellipse at center, black, transparent 72%);
+  }
+
+  /* printed dotted rule between sections */
+  .dot-rule {
+    height: 3px;
+    background-image: radial-gradient(oklch(0.245 0.014 58 / 0.85) 1.2px, transparent 1.4px);
+    background-size: 10px 3px;
+    background-repeat: repeat-x;
+    background-position: center;
+  }
+}

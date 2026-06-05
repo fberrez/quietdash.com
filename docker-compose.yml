@@ -1,0 +1,22 @@
+# Separate-server deployment (D3): the QuietDash server in a container.
+# All-in-one (Pi-is-server) uses the same image on the Pi itself.
+# The device (Python + Waveshare panel) is NOT containerized: it needs GPIO/SPI.
+services:
+  server:
+    build:
+      context: .
+      dockerfile: apps/server/Dockerfile
+    image: quietdash/server:dev
+    container_name: quietdash-server
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      QUIETDASH_PORT: "3000"
+      QUIETDASH_DATA_DIR: "/data"
+      AUTH_MODE: "single-password"
+    volumes:
+      - quietdash-data:/data
+
+volumes:
+  quietdash-data:
