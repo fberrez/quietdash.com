@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>QuietDash - Cahier des charges cadre bois</title>
+<style>
+  @page { size: A4; margin: 18mm 16mm; }
+  * { box-sizing: border-box; }
+  html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  body {
+    font-family: -apple-system, "Helvetica Neue", Arial, sans-serif;
+    color: #1d1a17;
+    font-size: 10.5pt;
+    line-height: 1.5;
+    margin: 0;
+  }
+  header {
+    border-bottom: 2px solid #9a3b1f;
+    padding-bottom: 10px;
+    margin-bottom: 18px;
+  }
+  header .brand { font-size: 16pt; font-weight: 700; letter-spacing: 0.5px; }
+  header .sub { color: #6b645c; font-size: 9.5pt; margin-top: 2px; }
+  h2 {
+    font-size: 11.5pt;
+    color: #9a3b1f;
+    margin: 20px 0 6px;
+    border-bottom: 1px solid #e3ddd4;
+    padding-bottom: 3px;
+  }
+  h3 { font-size: 10.5pt; margin: 12px 0 4px; }
+  p { margin: 4px 0 8px; }
+  ul { margin: 4px 0 10px; padding-left: 18px; }
+  li { margin: 3px 0; }
+  .note {
+    background: #f6f2ea;
+    border-left: 3px solid #9a3b1f;
+    padding: 8px 12px;
+    font-size: 9.5pt;
+    color: #4a443d;
+    margin: 12px 0 18px;
+  }
+  table { border-collapse: collapse; width: 100%; margin: 6px 0 12px; font-size: 9.8pt; }
+  th, td { text-align: left; padding: 5px 8px; border-bottom: 1px solid #e3ddd4; vertical-align: top; }
+  th { color: #6b645c; font-weight: 600; width: 32%; }
+  .muted { color: #6b645c; }
+  footer { margin-top: 24px; font-size: 8.5pt; color: #8a837a; border-top: 1px solid #e3ddd4; padding-top: 6px; }
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">QuietDash</div>
+  <div class="sub">Cahier des charges, cadre bois sur mesure pour un afficheur e-ink de bureau</div>
+</header>
+
+<p><strong>Le produit.</strong> QuietDash est un petit afficheur e-ink calme posé sur un
+bureau. On cherche un cadre bois qui loge un écran e-paper de 7,5 pouces et l'électronique
+derrière, avec une fenêtre propre sur la zone d'affichage, une sortie d'alimentation, et une
+bonne tenue posé sur un bureau (incliné). L'objet doit être beau et sobre, pas un boîtier
+technique : bois naturel, finition soignée, arêtes douces.</p>
+
+<div class="note">
+  Les cotes ci-dessous sont les valeurs catalogue (sources officielles Waveshare et
+  Raspberry Pi). Elles sont à confirmer sur le matériel réel avant production finale. Un
+  modèle 3D (DXF / STEP / STL) sera fourni au format de votre choix.
+</div>
+
+<h2>Composants à intégrer</h2>
+
+<h3>1. Dalle e-paper Waveshare 7,5" V2 (noir et blanc)</h3>
+<table>
+  <tr><th>Encombrement dalle</th><td>170,2 × 111,2 × 1,18 mm</td></tr>
+  <tr><th>Zone d'affichage active (fenêtre visible)</th><td>163,2 × 97,92 mm</td></tr>
+  <tr><th>Poids</th><td>environ 44 g</td></tr>
+  <tr><th>Particularité</th><td>dalle fine et fragile (verre sur support) ; une nappe FPC souple sort d'un bord vers la carte driver</td></tr>
+</table>
+
+<h3>2. Carte driver e-paper (HAT)</h3>
+<table>
+  <tr><th>Dimensions</th><td>environ 65 × 30,5 mm <span class="muted">(à confirmer sur le matériel)</span></td></tr>
+  <tr><th>Rôle</th><td>reçoit la nappe FPC et se connecte au Raspberry Pi par le port 40 broches</td></tr>
+</table>
+
+<h3>3. Raspberry Pi Zero 2 W</h3>
+<table>
+  <tr><th>Carte nue</th><td>65 × 30 × 5 mm</td></tr>
+  <tr><th>Hauteur avec connecteur 40 broches</th><td>environ 12 mm</td></tr>
+  <tr><th>Alimentation</th><td>port USB-C (ou micro-USB selon révision) sur un bord, à rendre accessible</td></tr>
+</table>
+
+<h3>4. Stack électronique derrière la dalle (driver + Pi empilés)</h3>
+<table>
+  <tr><th>Emprise au sol</th><td>environ 70 × 35 mm</td></tr>
+  <tr><th>Profondeur derrière la dalle</th><td>prévoir 18 à 22 mm</td></tr>
+  <tr><th>Divers</th><td>léger jeu pour câbles et dissipation</td></tr>
+</table>
+
+<h2>Contraintes de conception</h2>
+<ul>
+  <li><strong>Fenêtre d'affichage :</strong> ouverture nette alignée sur la zone active (163 × 98 mm), avec un léger recouvrement du cadre sur le pourtour de la dalle (feuillure) pour la maintenir.</li>
+  <li><strong>Maintien de la dalle :</strong> la dalle est fine et fragile, prévoir une feuillure ou un cadre intérieur qui la plaque sans contrainte sur le verre.</li>
+  <li><strong>Cavité arrière :</strong> loger le stack driver + Pi (70 × 35 mm, profondeur 18 à 22 mm), avec passage de la nappe FPC depuis le bord de la dalle.</li>
+  <li><strong>Accès alimentation :</strong> découpe ou passage pour le câble USB-C, idéalement discret (arrière ou dessous).</li>
+  <li><strong>Aération :</strong> quelques évents discrets si possible (le Pi chauffe peu mais reste allumé en continu).</li>
+  <li><strong>Tenue bureau :</strong> objet incliné, soit un pied/chevalet intégré (angle visé environ 15°), soit un socle. Stable, ne glisse pas.</li>
+  <li><strong>Accès maintenance :</strong> un fond démontable (panneau arrière vissé ou clipsé) pour accéder au Pi sans casser le cadre.</li>
+  <li><strong>Façade :</strong> pas de vis apparentes, aspect avant le plus pur possible.</li>
+</ul>
+
+<h2>Matériaux et finition</h2>
+<ul>
+  <li><strong>Prototype :</strong> contreplaqué bouleau (couches empilées pour créer la cavité), brut.</li>
+  <li><strong>Série finie :</strong> bois massif au choix (chêne, noyer, ou hêtre), finition huilée ou cire naturelle, mate.</li>
+  <li><strong>À éviter :</strong> vernis brillant, plastique apparent, aspect gadget.</li>
+</ul>
+
+<h2>Quantités pour le devis</h2>
+<ul>
+  <li>1 prototype (validation géométrie et ergonomie).</li>
+  <li>Petite série indicative : 10 à 25 pièces, pour estimer l'effet d'échelle.</li>
+</ul>
+
+<h2>Livrables attendus de l'atelier</h2>
+<ul>
+  <li>Devis prototype et devis série (10 à 25).</li>
+  <li>Délais indicatifs.</li>
+  <li>Contraintes éventuelles sur la géométrie (rayons mini, épaisseurs mini, tolérances).</li>
+  <li>Formats de fichiers attendus (DXF, STEP, STL) pour qu'on fournisse le bon modèle.</li>
+</ul>
+
+<footer>QuietDash - quietdash.com - Contact : Florent Berrez</footer>
+</body>
+</html>
