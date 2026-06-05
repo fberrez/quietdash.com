@@ -116,26 +116,41 @@ class FileBackend:
         print("[device] (file backend) idle")
 
 
+# A full refresh flashes the whole panel (black/white invert) — fine occasionally,
+# jarring every minute. A partial refresh updates in place with no flash but uses a
+# gentler waveform that ghosts and reads slightly lighter, so we periodically force
+# a full one to clear the ghost and re-deepen the black. Mirrors display.py.
+FULL_REFRESH_EVERY = int(os.environ.get("QUIETDASH_FULL_EVERY", "12"))
+
+
 class WaveshareBackend:
     def __init__(self, epd_module, Image):
         self.Image = Image
         self.epd = epd_module.EPD()
         self.epd.init()
         self.epd.Clear()
+        self._parted = False          # is the panel currently in partial-refresh mode?
+        self._since_full = 0          # partial updates since the last full refresh
+        self._last = None             # last buffer shown, to skip no-op updates
 
     def show(self, png: bytes) -> None:
         image = self.Image.open(io.BytesIO(png)).convert("1", dither=self.Image.Dither.NONE)
         buf = self.epd.getbuffer(image)
-        # The full e-ink cycle: init (wake + load full LUT) -> one full refresh ->
-        # sleep. The sleep is the important part: e-ink is bistable and HOLDS the
-        # image with no power, but leaving the controller energized between
-        # refreshes lets the just-driven black pixels relax toward grey (the
-        # "deep black during refresh, faded once settled" symptom) and degrades
-        # the panel over time. A single drive reaches full black; a second pass
-        # (black->black) can actually lighten it, so we don't re-drive.
-        self.epd.init()
-        self.epd.display(buf)
-        self.epd.sleep()
+        if buf == self._last:
+            return  # nothing changed: leave the panel untouched (no flash, holds)
+
+        if self._last is None or self._since_full >= FULL_REFRESH_EVERY:
+            self.epd.init()                          # full: flash, clears ghost, deep black
+            self.epd.display(buf)
+            self._parted = False
+            self._since_full = 0
+        else:
+            if not self._parted:
+                self.epd.init_part()                 # enter partial mode once
+                self._parted = True
+            self.epd.display_Partial(buf, 0, 0, 800, 480)  # no flash
+            self._since_full += 1
+        self._last = buf
 
     def sleep_message(self) -> None:
         self.epd.sleep()
