@@ -46,10 +46,21 @@ class NmWifi:
         return subprocess.run(["nmcli", *args], capture_output=True, text=True, timeout=timeout)
 
     def is_online(self) -> bool:
+        # "Are we on a usable network?" — deliberately NOT `nmcli networking
+        # connectivity check`: that forces a recheck needing polkit auth (fails
+        # as non-root, the device's normal case) and returns "none"/"limited" on
+        # an internet-less LAN, both of which wrongly read as offline and trip
+        # the setup AP. `device status` is read-only, needs no auth, and tells us
+        # a wifi/ethernet link is actually up — which is all S0 cares about.
         try:
-            return self._run("networking", "connectivity", "check", timeout=15).stdout.strip() == "full"
+            cp = self._run("-t", "-f", "TYPE,STATE", "device", "status", timeout=10)
         except Exception:
             return False
+        for line in cp.stdout.splitlines():
+            fields = line.split(":")
+            if len(fields) >= 2 and fields[0] in ("wifi", "ethernet") and fields[1].startswith("connected"):
+                return True
+        return False
 
     def scan(self) -> list[str]:
         try:

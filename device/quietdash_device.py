@@ -124,8 +124,17 @@ class WaveshareBackend:
         self.epd.Clear()
 
     def show(self, png: bytes) -> None:
-        image = self.Image.open(io.BytesIO(png)).convert("1")
-        self.epd.display(self.epd.getbuffer(image))
+        image = self.Image.open(io.BytesIO(png)).convert("1", dither=self.Image.Dither.NONE)
+        buf = self.epd.getbuffer(image)
+        # Re-init before every full refresh reloads the full waveform LUT, which
+        # keeps blacks deep and prevents the gray/ghosted drift a bare repeated
+        # display() falls into (matches focus_live.py's push_full).
+        self.epd.init()
+        self.epd.display(buf)
+        # A second full-refresh pass re-asserts the black pixels: the 7.5" V2
+        # darkens measurably on a repeat full drive, deepening its near-charcoal
+        # black. Cheap insurance at our (minutes) cadence.
+        self.epd.display(buf)
 
     def sleep_message(self) -> None:
         self.epd.sleep()
