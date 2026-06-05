@@ -1,0 +1,24 @@
+{
+  "name": "@quietdash/render",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "build": "tsc --noEmit",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@quietdash/shared": "workspace:*",
+    "@resvg/resvg-js": "^2.6.2",
+    "pngjs": "^7.0.0",
+    "satori": "^0.12.1",
+    "satori-html": "^0.3.2"
+  },
+  "devDependencies": {
+    "@types/pngjs": "^6.0.5",
+    "typescript": "^5.7.2"
+  }
+}

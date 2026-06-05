@@ -1,0 +1,27 @@
+{
+  "version": "7",
+  "dialect": "sqlite",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "6",
+      "when": 1780650036365,
+      "tag": "0000_overconfident_molecule_man",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1780651036985,
+      "tag": "0001_huge_speed",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1780658328597,
+      "tag": "0002_shiny_miek",
+      "breakpoints": true
+    }
+  ]
+}
