@@ -1,0 +1,34 @@
+# dependencies
+node_modules/
+.pnpm-store/
+
+# builds
+dist/
+build/
+*.tsbuildinfo
+
+# turbo
+.turbo/
+
+# data (SQLite lives outside the repo in prod; ignore local dev dbs)
+*.db
+*.db-shm
+*.db-wal
+apps/server/data/
+
+# env
+.env
+.env.*
+!.env.example
+
+# python
+__pycache__/
+*.pyc
+device/.venv/
+
+# os / editor
+.DS_Store
+.playwright-mcp/
+
+# local render output (smoke tests)
+*.out.png

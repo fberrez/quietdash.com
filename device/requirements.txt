@@ -1,0 +1,9 @@
+# Pairing + panel. The file-save fallback (laptop dev) needs none of these:
+# missing libs degrade gracefully (env-override discovery, printed claim URL).
+zeroconf>=0.131.0   # mDNS server discovery (skip if using QUIETDASH_SERVER_URL)
+qrcode>=7.4.2       # on-panel QR claim screen
+Pillow>=10.0.0      # QR rendering + 1-bit panel conversion
+
+# The Waveshare e-Paper driver (waveshare_epd) is NOT on PyPI. On the Pi, install
+# it from Waveshare's repo (https://github.com/waveshareteam/e-Paper) into the
+# device's Python path, and enable SPI via raspi-config.
