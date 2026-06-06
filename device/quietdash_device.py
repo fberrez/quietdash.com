@@ -133,13 +133,24 @@ class WaveshareBackend:
         self._since_full = 0          # partial updates since the last full refresh
         self._last = None             # last buffer shown, to skip no-op updates
 
+    @staticmethod
+    def _frac_changed(a, b) -> float:
+        if b is None or len(a) != len(b):
+            return 1.0
+        return sum(1 for x, y in zip(a, b) if x != y) / len(a)
+
     def show(self, png: bytes) -> None:
         image = self.Image.open(io.BytesIO(png)).convert("1", dither=self.Image.Dither.NONE)
         buf = self.epd.getbuffer(image)
         if buf == self._last:
             return  # nothing changed: leave the panel untouched (no flash, holds)
 
-        if self._last is None or self._since_full >= FULL_REFRESH_EVERY:
+        # Full refresh on first frame, periodically, OR on a big change (a whole
+        # scene swap like setup-QR -> clock differs almost everywhere; a partial
+        # there would ghost the old scene). A minute tick changes <5% of bytes and
+        # stays a flash-free partial.
+        big_change = self._frac_changed(buf, self._last) > 0.18
+        if self._last is None or self._since_full >= FULL_REFRESH_EVERY or big_change:
             self.epd.init()                          # full: flash, clears ghost, deep black
             self.epd.display(buf)
             self._parted = False
