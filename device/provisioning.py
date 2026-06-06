@@ -123,7 +123,7 @@ class NmWifi:
                 return parts[0]
         return None
 
-    _ap_ssid: str | None = None  # remembered so connect() can rebuild the AP on retry
+    _ap_ssid: str | None = None  # remembered so connect() can restart the AP on retry
     _hostapd: subprocess.Popen | None = None  # the running hostapd process
 
     @staticmethod
