@@ -116,11 +116,15 @@ class FileBackend:
         print("[device] (file backend) idle")
 
 
-# A full refresh flashes the whole panel (black/white invert) — fine occasionally,
-# jarring every minute. A partial refresh updates in place with no flash but uses a
-# gentler waveform that ghosts and reads slightly lighter, so we periodically force
-# a full one to clear the ghost and re-deepen the black. Mirrors focus_live.py.
-FULL_REFRESH_EVERY = int(os.environ.get("QUIETDASH_FULL_EVERY", "12"))
+# Every update is a FULL refresh (init + display), nothing else. On this 7.5" V2:
+#   - PARTIAL refresh (display_Partial) washes the digits lighter and ghosts the
+#     pixels that changed — every "washed out" frame we saw was a partial one.
+#   - SLEEPING the panel between refreshes makes the *next* frame ghost (the
+#     controller loses its old-frame reference, so display() can't cancel the
+#     previous image).
+# A single full refresh reaches deep black AND clears the old frame (matches
+# focus_live.py's push_full). The cost is a brief black/white flash each update;
+# raise QUIETDASH_REFRESH_SECONDS to flash less often.
 
 
 class WaveshareBackend:
@@ -129,38 +133,16 @@ class WaveshareBackend:
         self.epd = epd_module.EPD()
         self.epd.init()
         self.epd.Clear()
-        self._parted = False          # is the panel currently in partial-refresh mode?
-        self._since_full = 0          # partial updates since the last full refresh
-        self._last = None             # last buffer shown, to skip no-op updates
-
-    @staticmethod
-    def _frac_changed(a, b) -> float:
-        if b is None or len(a) != len(b):
-            return 1.0
-        return sum(1 for x, y in zip(a, b) if x != y) / len(a)
+        self._last = None             # last buffer shown, to skip no-op refreshes
 
     def show(self, png: bytes) -> None:
         image = self.Image.open(io.BytesIO(png)).convert("1", dither=self.Image.Dither.NONE)
         buf = self.epd.getbuffer(image)
         if buf == self._last:
-            return  # nothing changed: leave the panel untouched (no flash, holds)
+            return  # unchanged: the panel holds the current image, nothing to do
 
-        # Full refresh on first frame, periodically, OR on a big change (a whole
-        # scene swap like setup-QR -> clock differs almost everywhere; a partial
-        # there would ghost the old scene). A minute tick changes <5% of bytes and
-        # stays a flash-free partial.
-        big_change = self._frac_changed(buf, self._last) > 0.18
-        if self._last is None or self._since_full >= FULL_REFRESH_EVERY or big_change:
-            self.epd.init()                          # full: flash, clears ghost, deep black
-            self.epd.display(buf)
-            self._parted = False
-            self._since_full = 0
-        else:
-            if not self._parted:
-                self.epd.init_part()                 # enter partial mode once
-                self._parted = True
-            self.epd.display_Partial(buf, 0, 0, 800, 480)  # no flash
-            self._since_full += 1
+        self.epd.init()               # reload the full-refresh waveform LUT
+        self.epd.display(buf)         # full refresh: deep black, clears the old frame
         self._last = buf
 
     def sleep_message(self) -> None:
@@ -262,8 +244,11 @@ def steady_loop(server: str, token: str, backend) -> str:
                 print("[device] token revoked; re-pairing")
                 return "revoked"
             print(f"[device] HTTP {exc.code}: {exc.reason}", file=sys.stderr)
-        except urllib.error.URLError as exc:
-            print(f"[device] server unreachable: {exc.reason}", file=sys.stderr)
+        except Exception as exc:
+            # Any transient failure (socket TimeoutError, URLError, a panel/SPI
+            # glitch) must NOT kill the loop: the device would freeze on its last
+            # frame until a manual restart. Log it and retry on the next tick.
+            print(f"[device] refresh failed ({exc!r}); retrying next tick", file=sys.stderr)
         time.sleep(REFRESH_SECONDS)
 
 
