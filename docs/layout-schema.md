@@ -50,7 +50,9 @@ Slot geometry (pixel boxes) lives in `packages/render/src/layouts/`. Slot
 | `rss`     | rss connector      | `connectorId` str, `maxItems` 1–8 (`5`)                    |
 
 `connectorId` references a connector created via `POST /api/connectors`
-(weather needs a bring-your-own OpenWeather key; agenda/rss take a public URL).
+(weather needs a bring-your-own OpenWeather key; an agenda/rss connector takes
+**one or more** public URLs — `{ "urls": ["…", "…"] }` — and the widget shows
+their events/items merged).
 
 ## Rotation
 

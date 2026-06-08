@@ -6,6 +6,14 @@ type Kind = "openweather" | "ics" | "rss";
 
 const KIND_LABEL: Record<Kind, string> = { openweather: "Weather (OpenWeather)", ics: "Calendar (ICS URL)", rss: "Feed (RSS)" };
 
+/** Summarize a connector's config for the list row. */
+function summarize(c: ConnectorView): string {
+  const cfg = c.config as { location?: string; urls?: string[]; url?: string };
+  if (c.kind === "openweather") return cfg.location ?? "";
+  const urls = cfg.urls ?? (cfg.url ? [cfg.url] : []);
+  return `${urls.length} link${urls.length === 1 ? "" : "s"}`;
+}
+
 export function ConnectorsPage() {
   const [list, setList] = useState<ConnectorView[]>([]);
   const [err, setErr] = useState<string | null>(null);
@@ -13,7 +21,7 @@ export function ConnectorsPage() {
   const [kind, setKind] = useState<Kind>("openweather");
   const [label, setLabel] = useState("");
   const [location, setLocation] = useState("");
-  const [url, setUrl] = useState("");
+  const [urls, setUrls] = useState<string[]>([""]);
   const [secret, setSecret] = useState("");
   const [test, setTest] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -29,7 +37,20 @@ export function ConnectorsPage() {
     void load();
   }, [load]);
 
-  const configFor = (): Record<string, unknown> => (kind === "openweather" ? { location } : { url });
+  const reset = () => {
+    setLabel("");
+    setLocation("");
+    setUrls([""]);
+    setSecret("");
+    setTest(null);
+  };
+
+  const configFor = (): Record<string, unknown> =>
+    kind === "openweather" ? { location } : { urls: urls.map((u) => u.trim()).filter(Boolean) };
+
+  const setUrlAt = (i: number, v: string) => setUrls((prev) => prev.map((u, j) => (j === i ? v : u)));
+  const addUrl = () => setUrls((prev) => [...prev, ""]);
+  const removeUrl = (i: number) => setUrls((prev) => (prev.length === 1 ? prev : prev.filter((_, j) => j !== i)));
 
   const runTest = async () => {
     setTest("Testing…");
@@ -42,11 +63,7 @@ export function ConnectorsPage() {
     setErr(null);
     try {
       await api.createConnector(kind, label || KIND_LABEL[kind], configFor(), secret || undefined);
-      setLabel("");
-      setLocation("");
-      setUrl("");
-      setSecret("");
-      setTest(null);
+      reset();
       await load();
     } catch (e) {
       setErr((e as Error).message);
@@ -77,7 +94,7 @@ export function ConnectorsPage() {
                     {c.label} <Badge tone="soft">{c.kind}</Badge>
                   </div>
                   <div className="text-xs text-ink-soft">
-                    {String((c.config as { location?: string; url?: string }).location ?? (c.config as { url?: string }).url ?? "")}
+                    {summarize(c)}
                     {c.secretMask ? ` · key ${c.secretMask}` : ""}
                   </div>
                 </div>
@@ -95,7 +112,7 @@ export function ConnectorsPage() {
         {err && <p className="mb-3 text-sm text-brick-deep">{err}</p>}
         <div className="space-y-3">
           <Field label="Type">
-            <Select value={kind} onChange={(e) => { setKind(e.target.value as Kind); setTest(null); }}>
+            <Select value={kind} onChange={(e) => { setKind(e.target.value as Kind); reset(); }}>
               {(Object.keys(KIND_LABEL) as Kind[]).map((k) => (
                 <option key={k} value={k}>
                   {KIND_LABEL[k]}
@@ -116,13 +133,27 @@ export function ConnectorsPage() {
               </Field>
             </>
           ) : (
-            <Field label={kind === "ics" ? "ICS URL" : "Feed URL"}>
-              <TextInput
-                type="url"
-                placeholder={kind === "ics" ? "https://…/basic.ics" : "https://…/feed.xml"}
-                value={url}
-                onChange={(e) => setUrl(e.target.value)}
-              />
+            <Field label={kind === "ics" ? "Calendar URLs" : "Feed URLs"}>
+              <div className="space-y-2">
+                {urls.map((u, i) => (
+                  <div key={i} className="flex gap-2">
+                    <TextInput
+                      type="url"
+                      placeholder={kind === "ics" ? "https://…/basic.ics" : "https://…/feed.xml"}
+                      value={u}
+                      onChange={(e) => setUrlAt(i, e.target.value)}
+                    />
+                    {urls.length > 1 && (
+                      <button onClick={() => removeUrl(i)} className="px-2 text-sm text-ink-soft hover:text-brick-deep" title="Remove">
+                        ✕
+                      </button>
+                    )}
+                  </div>
+                ))}
+                <button onClick={addUrl} className="text-sm text-brick hover:text-brick-deep">
+                  + Add another {kind === "ics" ? "calendar" : "feed"}
+                </button>
+              </div>
             </Field>
           )}
           {test && <p className={`text-sm ${test.startsWith("Connection OK") ? "text-ink" : "text-brick-deep"}`}>{test}</p>}
