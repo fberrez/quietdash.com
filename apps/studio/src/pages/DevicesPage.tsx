@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { api, type DeviceView } from "../lib/api";
 import { Badge, Button } from "../components/ui";
 
@@ -46,6 +47,7 @@ export function DevicesPage() {
 
   return (
     <div className="space-y-8">
+      <h1 className="sr-only">Devices</h1>
       {err && <p className="text-sm text-brick-deep">{err}</p>}
 
       {pending.length > 0 && (
@@ -87,6 +89,12 @@ export function DevicesPage() {
                 </div>
                 <div className="flex items-center gap-2">
                   <Badge tone={d.online ? "ink" : "soft"}>{d.online ? "online" : "offline"}</Badge>
+                  <Link
+                    to={`/devices/${d.id}/schedule`}
+                    className="rounded-md border border-line px-3 py-1.5 text-sm hover:bg-paper-sunk"
+                  >
+                    Schedule
+                  </Link>
                   <Button variant="danger" onClick={() => unpair(d.id)}>
                     Unpair
                   </Button>

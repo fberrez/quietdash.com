@@ -1,5 +1,6 @@
 import { sql } from "drizzle-orm";
 import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
+import type { DashboardLayout, PlaylistEntry } from "@quietdash/shared";
 
 /**
  * Tenant-ready schema (D11). Every owned row carries `ownerId`.
@@ -24,8 +25,8 @@ export const dashboards = sqliteTable("dashboards", {
     .notNull()
     .references(() => users.id, { onDelete: "cascade" }),
   name: text("name").notNull(),
-  /** widget/layout config as JSON text; opaque in Phase 0 (fixed clock) */
-  layout: text("layout", { mode: "json" }).notNull(),
+  /** curated layout + per-slot widget assignment (see @quietdash/shared) */
+  layout: text("layout", { mode: "json" }).notNull().$type<DashboardLayout>(),
   createdAt: text("created_at")
     .notNull()
     .default(sql`(CURRENT_TIMESTAMP)`),
@@ -60,6 +61,71 @@ export const pairings = sqliteTable("pairings", {
   /** plaintext device token, set on approval and cleared after one poll delivers it */
   deliveryToken: text("delivery_token"),
   expiresAt: text("expires_at").notNull(),
+  createdAt: text("created_at")
+    .notNull()
+    .default(sql`(CURRENT_TIMESTAMP)`),
+});
+
+/** Time-based rotation: one playlist per device (D-product-surface). */
+export const playlists = sqliteTable("playlists", {
+  id: text("id").primaryKey(),
+  ownerId: text("owner_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  deviceId: text("device_id")
+    .notNull()
+    .unique()
+    .references(() => devices.id, { onDelete: "cascade" }),
+  timezone: text("timezone").notNull().default("UTC"),
+  defaultDashboardId: text("default_dashboard_id").references(() => dashboards.id, { onDelete: "set null" }),
+  /** ordered [{ dashboardId, days[], startMinute, endMinute }] */
+  entries: text("entries", { mode: "json" }).notNull().$type<PlaylistEntry[]>(),
+  createdAt: text("created_at")
+    .notNull()
+    .default(sql`(CURRENT_TIMESTAMP)`),
+});
+
+/** Per-owner connector config; the secret (API key) is encrypted at rest (D9). */
+export const connectorConfigs = sqliteTable("connector_configs", {
+  id: text("id").primaryKey(),
+  ownerId: text("owner_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  /** "openweather" | "ics" | "rss" */
+  kind: text("kind").notNull(),
+  label: text("label").notNull(),
+  /** non-secret config (location, url, ...) as JSON */
+  config: text("config", { mode: "json" }).notNull().$type<Record<string, unknown>>(),
+  /** AES-256-GCM blob "iv:tag:ciphertext"; null for keyless connectors (ics/rss) */
+  secretEnc: text("secret_enc"),
+  createdAt: text("created_at")
+    .notNull()
+    .default(sql`(CURRENT_TIMESTAMP)`),
+});
+
+/** Local todo lists (the tasks widget reads these; no external API). */
+export const taskLists = sqliteTable("task_lists", {
+  id: text("id").primaryKey(),
+  ownerId: text("owner_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  name: text("name").notNull(),
+  createdAt: text("created_at")
+    .notNull()
+    .default(sql`(CURRENT_TIMESTAMP)`),
+});
+
+export const tasks = sqliteTable("tasks", {
+  id: text("id").primaryKey(),
+  ownerId: text("owner_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  listId: text("list_id")
+    .notNull()
+    .references(() => taskLists.id, { onDelete: "cascade" }),
+  title: text("title").notNull(),
+  done: integer("done", { mode: "boolean" }).notNull().default(false),
+  position: integer("position").notNull().default(0),
   createdAt: text("created_at")
     .notNull()
     .default(sql`(CURRENT_TIMESTAMP)`),

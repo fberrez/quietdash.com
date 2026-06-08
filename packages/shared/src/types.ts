@@ -1,4 +1,5 @@
 import type { AuthMode, DeviceStatus } from "./constants.js";
+import type { DashboardLayout } from "./layout.js";
 
 /**
  * Tenant-ready domain model (D11). Every owned resource carries `ownerId`.
@@ -17,8 +18,8 @@ export interface Dashboard {
   id: string;
   ownerId: string;
   name: string;
-  /** Layout/widget config. Opaque for now (Phase 0 renders a fixed clock). */
-  layout: unknown;
+  /** Curated layout + per-slot widget assignment (see ./layout). */
+  layout: DashboardLayout;
   createdAt: string;
 }
 

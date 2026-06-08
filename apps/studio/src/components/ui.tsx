@@ -1,4 +1,4 @@
-import type { ButtonHTMLAttributes, InputHTMLAttributes, ReactNode } from "react";
+import type { ButtonHTMLAttributes, InputHTMLAttributes, ReactNode, SelectHTMLAttributes } from "react";
 
 export function Button({
   variant = "primary",
@@ -21,6 +21,24 @@ export function TextInput(props: InputHTMLAttributes<HTMLInputElement>) {
       className="w-full rounded-md border border-line bg-card px-3 py-2 text-sm text-ink outline-none transition placeholder:text-ink-soft/70 focus:border-brick focus:ring-2 focus:ring-brick/20"
       {...props}
     />
+  );
+}
+
+export function Select(props: SelectHTMLAttributes<HTMLSelectElement>) {
+  return (
+    <select
+      className="w-full rounded-md border border-line bg-card px-3 py-2 text-sm text-ink outline-none transition focus:border-brick focus:ring-2 focus:ring-brick/20"
+      {...props}
+    />
+  );
+}
+
+export function Field({ label, children }: { label: string; children: ReactNode }) {
+  return (
+    <label className="block">
+      <span className="mb-1 block text-xs font-medium text-ink-soft">{label}</span>
+      {children}
+    </label>
   );
 }
 

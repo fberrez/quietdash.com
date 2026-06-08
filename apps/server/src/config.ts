@@ -10,6 +10,12 @@ export const config = {
   authMode,
   instanceName: process.env.QUIETDASH_INSTANCE_NAME ?? "QuietDash",
   /**
+   * 32-byte AES key (64 hex chars) encrypting connector API keys at rest (D9).
+   * If unset, the secret store derives a stable key from the instance session
+   * secret (zero-config self-host); set an explicit key for backup/portability.
+   */
+  secretKey: process.env.QUIETDASH_SECRET_KEY,
+  /**
    * Phase 0 only: a fixed device token so `curl` and the device stub can pull
    * an image before the real pairing flow (Phase 1) exists. Seeded onto the
    * dev device. Replace with issued-on-approve tokens in Phase 1.

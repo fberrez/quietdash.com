@@ -18,3 +18,7 @@ The canonical context for this repo — read both before making architectural ca
 - Renderer and server consume `@quietdash/*` packages as TS source via `tsx`
   (no build step); the studio is served from `apps/studio/dist`.
 - The pairing + multi-tenant design and roadmap live in GitHub issue #1.
+- The dashboard/widget product surface: curated layouts + per-slot widgets,
+  server-side connectors (BYO-key), a studio editor with server-rendered
+  preview, and time-based rotation. The public layout contract is
+  `docs/layout-schema.md`; adding a widget is `docs/widgets.md`.
