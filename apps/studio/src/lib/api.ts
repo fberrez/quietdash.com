@@ -1,4 +1,16 @@
-/** Thin fetch wrappers for the studio. Cookies ride along same-origin. */
+/**
+ * Thin fetch wrappers for the studio.
+ *
+ * Requests are prefixed with the configured server base (empty for the
+ * served-by-server web path, an absolute LAN URL for standalone clients; see
+ * lib/server.ts). `credentials: "include"` sends the session cookie both
+ * same-origin and cross-origin. Note: cross-origin cookies additionally need
+ * the server on TLS with `SameSite=None; Secure` plus CORS-with-credentials;
+ * that is the auth work a real standalone/Tauri build depends on (Phase 3),
+ * not yet wired here.
+ */
+
+import { getApiBase } from "./server";
 
 export interface Me {
   setupComplete: boolean;
@@ -27,8 +39,9 @@ export interface PairingLookup {
 }
 
 async function req<T>(path: string, init?: RequestInit): Promise<T> {
-  const res = await fetch(path, {
+  const res = await fetch(getApiBase() + path, {
     ...init,
+    credentials: "include",
     headers: { "content-type": "application/json", ...(init?.headers ?? {}) },
   });
   const body = (await res.json().catch(() => ({}))) as T & { error?: string };
