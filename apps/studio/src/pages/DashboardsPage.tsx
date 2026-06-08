@@ -45,7 +45,7 @@ export function DashboardsPage() {
   return (
     <div className="space-y-8">
       <section>
-        <h2 className="label text-ink-soft mb-3">Dashboards</h2>
+        <h1 className="label text-ink-soft mb-3">Dashboards</h1>
         {rows.length === 0 ? (
           <p className="text-sm text-ink-soft">No dashboards yet. Create one below.</p>
         ) : (
@@ -73,7 +73,7 @@ export function DashboardsPage() {
       </section>
 
       <section className="rounded-lg border border-line bg-card p-5">
-        <h3 className="label text-brick mb-4">New dashboard</h3>
+        <h2 className="label text-brick-deep mb-4">New dashboard</h2>
         {err && <p className="mb-3 text-sm text-brick-deep">{err}</p>}
         <div className="space-y-3">
           <Field label="Name">

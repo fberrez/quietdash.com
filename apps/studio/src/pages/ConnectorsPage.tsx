@@ -82,7 +82,7 @@ export function ConnectorsPage() {
   return (
     <div className="space-y-8">
       <section>
-        <h2 className="label text-ink-soft mb-3">Connectors</h2>
+        <h1 className="label text-ink-soft mb-3">Connectors</h1>
         {list.length === 0 ? (
           <p className="text-sm text-ink-soft">No connectors yet. Add one below to feed weather, calendar, or a feed.</p>
         ) : (
@@ -108,7 +108,7 @@ export function ConnectorsPage() {
       </section>
 
       <section className="rounded-lg border border-line bg-card p-5">
-        <h3 className="label text-brick mb-4">Add a connector</h3>
+        <h2 className="label text-brick-deep mb-4">Add a connector</h2>
         {err && <p className="mb-3 text-sm text-brick-deep">{err}</p>}
         <div className="space-y-3">
           <Field label="Type">
@@ -133,28 +133,37 @@ export function ConnectorsPage() {
               </Field>
             </>
           ) : (
-            <Field label={kind === "ics" ? "Calendar URLs" : "Feed URLs"}>
+            <div role="group" aria-labelledby="urls-label">
+              <span id="urls-label" className="mb-1 block text-xs font-medium text-ink-soft">
+                {kind === "ics" ? "Calendar URLs" : "Feed URLs"}
+              </span>
               <div className="space-y-2">
                 {urls.map((u, i) => (
                   <div key={i} className="flex gap-2">
                     <TextInput
                       type="url"
+                      aria-label={`${kind === "ics" ? "Calendar" : "Feed"} URL ${i + 1}`}
                       placeholder={kind === "ics" ? "https://…/basic.ics" : "https://…/feed.xml"}
                       value={u}
                       onChange={(e) => setUrlAt(i, e.target.value)}
                     />
                     {urls.length > 1 && (
-                      <button onClick={() => removeUrl(i)} className="px-2 text-sm text-ink-soft hover:text-brick-deep" title="Remove">
+                      <button
+                        type="button"
+                        onClick={() => removeUrl(i)}
+                        aria-label={`Remove URL ${i + 1}`}
+                        className="rounded-md px-2.5 text-sm text-ink-soft hover:text-brick-deep"
+                      >
                         ✕
                       </button>
                     )}
                   </div>
                 ))}
-                <button onClick={addUrl} className="text-sm text-brick hover:text-brick-deep">
+                <button type="button" onClick={addUrl} className="rounded-md py-1 text-sm text-brick-deep hover:underline">
                   + Add another {kind === "ics" ? "calendar" : "feed"}
                 </button>
               </div>
-            </Field>
+            </div>
           )}
           {test && <p className={`text-sm ${test.startsWith("Connection OK") ? "text-ink" : "text-brick-deep"}`}>{test}</p>}
           <div className="flex gap-2">

@@ -47,6 +47,7 @@ export function DevicesPage() {
 
   return (
     <div className="space-y-8">
+      <h1 className="sr-only">Devices</h1>
       {err && <p className="text-sm text-brick-deep">{err}</p>}
 
       {pending.length > 0 && (

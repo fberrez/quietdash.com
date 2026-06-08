@@ -45,7 +45,7 @@ export function SchedulePage() {
   return (
     <div className="max-w-2xl space-y-6">
       <div className="flex items-center justify-between">
-        <h2 className="label text-ink-soft">Rotation schedule</h2>
+        <h1 className="label text-ink-soft">Rotation schedule</h1>
         <div className="flex gap-2">
           <Button variant="accent" onClick={save}>
             {saved ? "Saved" : "Save"}
@@ -61,7 +61,7 @@ export function SchedulePage() {
         shows the default.
       </p>
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <Field label="Timezone">
           <Select value={cfg.timezone} onChange={(e) => patch({ timezone: e.target.value })}>
             <option value={TZ}>{TZ}</option>
@@ -85,11 +85,11 @@ export function SchedulePage() {
           <div key={i} className="rounded-lg border border-line bg-card p-4 space-y-3">
             <div className="flex items-center justify-between">
               <span className="text-sm font-medium">Window {i + 1} · {dashName(e.dashboardId)}</span>
-              <button onClick={() => removeEntry(i)} className="text-xs text-ink-soft hover:text-brick-deep">
+              <button onClick={() => removeEntry(i)} aria-label={`Remove window ${i + 1}`} className="rounded-md text-xs text-ink-soft hover:text-brick-deep">
                 remove
               </button>
             </div>
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
               <Field label="Dashboard">
                 <Select value={e.dashboardId} onChange={(ev) => setEntry(i, { ...e, dashboardId: ev.target.value })}>
                   {dashboards.map((d) => (
@@ -122,8 +122,9 @@ export function SchedulePage() {
                 return (
                   <button
                     key={d}
+                    aria-pressed={on}
                     onClick={() => setEntry(i, { ...e, days: on ? e.days.filter((x) => x !== di) : [...e.days, di] })}
-                    className={`rounded-md px-2 py-1 text-xs ${on ? "bg-ink text-paper" : "border border-line text-ink-soft"}`}
+                    className={`rounded-md px-2.5 py-1.5 text-xs ${on ? "bg-ink text-paper" : "border border-line text-ink-soft"}`}
                   >
                     {d}
                   </button>

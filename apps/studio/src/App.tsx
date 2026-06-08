@@ -46,10 +46,10 @@ export function App() {
 
   return (
     <div className="min-h-screen bg-paper text-ink">
-      <header className="border-b border-line px-6 py-4 flex items-center justify-between">
-        <div className="flex items-center gap-6">
-          <span className="label text-brick">QuietDash</span>
-          <nav className="flex items-center gap-1">
+      <header className="border-b border-line px-6 py-4 flex flex-wrap items-center justify-between gap-x-4 gap-y-3">
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-2 sm:gap-x-6 min-w-0">
+          <span className="label text-brick-deep">QuietDash</span>
+          <nav className="flex flex-wrap items-center gap-1">
             {NAV.map((n) => (
               <NavLink
                 key={n.to}

@@ -48,7 +48,8 @@ export function TasksPage() {
   };
 
   return (
-    <div className="grid grid-cols-[200px_1fr] gap-6">
+    <div className="grid grid-cols-1 gap-6 sm:grid-cols-[180px_1fr]">
+      <h1 className="sr-only">Tasks</h1>
       <aside className="space-y-3">
         <h2 className="label text-ink-soft">Lists</h2>
         <ul className="space-y-1">
@@ -67,7 +68,7 @@ export function TasksPage() {
         </ul>
         <div className="flex gap-1">
           <TextInput placeholder="New list" value={newList} onChange={(e) => setNewList(e.target.value)} onKeyDown={(e) => e.key === "Enter" && addList()} />
-          <Button variant="ghost" onClick={addList}>
+          <Button variant="ghost" onClick={addList} aria-label="Add list">
             +
           </Button>
         </div>
@@ -86,11 +87,16 @@ export function TasksPage() {
               {items.length === 0 && <li className="px-4 py-3 text-sm text-ink-soft">No tasks yet.</li>}
               {items.map((it) => (
                 <li key={it.id} className="flex items-center justify-between px-4 py-2.5">
-                  <button onClick={() => toggle(it)} className="flex items-center gap-3 text-left">
-                    <span className="font-mono text-sm">{it.done ? "[x]" : "[ ]"}</span>
+                  <button
+                    onClick={() => toggle(it)}
+                    aria-pressed={it.done}
+                    aria-label={`Mark "${it.title}" ${it.done ? "not done" : "done"}`}
+                    className="flex items-center gap-3 rounded-md text-left"
+                  >
+                    <span className="font-mono text-sm" aria-hidden="true">{it.done ? "[x]" : "[ ]"}</span>
                     <span className={`text-sm ${it.done ? "text-ink-soft line-through" : ""}`}>{it.title}</span>
                   </button>
-                  <button onClick={() => del(it)} className="text-xs text-ink-soft hover:text-brick-deep">
+                  <button onClick={() => del(it)} aria-label={`Delete "${it.title}"`} className="rounded-md text-xs text-ink-soft hover:text-brick-deep">
                     delete
                   </button>
                 </li>

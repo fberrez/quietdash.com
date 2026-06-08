@@ -47,6 +47,9 @@ export function DashboardEditor() {
     return () => clearTimeout(handle);
   }, [layout]);
 
+  // Release the final preview blob when leaving the editor.
+  useEffect(() => () => { if (lastUrl.current) URL.revokeObjectURL(lastUrl.current); }, []);
+
   const setSlot = useCallback((slot: string, widget: WidgetInstance | null) => {
     setSaved(false);
     setLayout((prev) => {
@@ -79,9 +82,10 @@ export function DashboardEditor() {
   const slots = LAYOUT_SLOTS[layout.layoutId];
 
   return (
-    <div className="grid grid-cols-[1fr_420px] gap-8">
+    <div className="grid grid-cols-1 gap-8 lg:grid-cols-[1fr_minmax(340px,400px)]">
+      <h1 className="sr-only">Edit dashboard</h1>
       <div className="space-y-5">
-        <div className="flex items-end gap-2">
+        <div className="flex flex-wrap items-end gap-2">
           <div className="flex-1">
             <Field label="Name">
               <TextInput value={name} onChange={(e) => { setName(e.target.value); setSaved(false); }} />
@@ -96,9 +100,9 @@ export function DashboardEditor() {
         </div>
 
         <div>
-          <h3 className="label text-ink-soft mb-2">
+          <h2 className="label text-ink-soft mb-2">
             Slots · <span className="text-ink">{layout.layoutId}</span>
-          </h3>
+          </h2>
           <div className="space-y-4">
             {slots.map((slot) => {
               const inst = layout.slots[slot];
@@ -137,7 +141,7 @@ export function DashboardEditor() {
       </div>
 
       <div className="space-y-2">
-        <h3 className="label text-ink-soft">Preview</h3>
+        <h2 className="label text-ink-soft">Preview</h2>
         <div className="rounded-lg border border-line bg-paper-sunk p-2">
           {preview ? (
             <img src={preview} width={400} height={240} alt="dashboard preview" className="w-full" style={{ imageRendering: "pixelated" }} />
@@ -183,7 +187,7 @@ function WidgetConfig({
   switch (instance.type) {
     case "clock":
       return (
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <Field label="Format">
             <Select value={String(cfg.format)} onChange={(e) => onChange("format", e.target.value)}>
               <option value="24h">24h</option>
@@ -209,7 +213,7 @@ function WidgetConfig({
       );
     case "weather":
       return (
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           {connectorField("openweather")}
           <Field label="Units">
             <Select value={String(cfg.units)} onChange={(e) => onChange("units", e.target.value)}>
@@ -221,7 +225,7 @@ function WidgetConfig({
       );
     case "agenda":
       return (
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           {connectorField("ics")}
           <Field label="Max events">
             <TextInput type="number" value={String(cfg.maxEvents)} onChange={(e) => onChange("maxEvents", num(e.target.value, 4))} />
@@ -230,7 +234,7 @@ function WidgetConfig({
       );
     case "rss":
       return (
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           {connectorField("rss")}
           <Field label="Max items">
             <TextInput type="number" value={String(cfg.maxItems)} onChange={(e) => onChange("maxItems", num(e.target.value, 5))} />
@@ -239,7 +243,7 @@ function WidgetConfig({
       );
     case "tasks":
       return (
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <Field label="List">
             <Select value={String(cfg.listId ?? "")} onChange={(e) => onChange("listId", e.target.value || undefined)}>
               <option value="">(first list)</option>
@@ -257,7 +261,7 @@ function WidgetConfig({
       );
     case "focus":
       return (
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <Field label="Focus minutes">
             <TextInput type="number" value={String(cfg.workMinutes)} onChange={(e) => onChange("workMinutes", num(e.target.value, 25))} />
           </Field>
