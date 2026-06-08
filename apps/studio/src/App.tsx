@@ -1,11 +1,13 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 import { api } from "./lib/api";
+import { clearServerUrl, getStoredServerUrl, isStandalone } from "./lib/server";
 import { useSession } from "./lib/useSession";
 import { Button } from "./components/ui";
 import { AuthScreen } from "./pages/AuthScreen";
 import { DevicesPage } from "./pages/DevicesPage";
 import { LoginPage } from "./pages/LoginPage";
 import { PairPage } from "./pages/PairPage";
+import { ServerPicker } from "./pages/ServerPicker";
 import { SetupPage } from "./pages/SetupPage";
 
 export function App() {
@@ -15,6 +17,10 @@ export function App() {
     return <div className="min-h-screen grid place-items-center bg-paper text-sm text-ink-soft">…</div>;
   }
   if (!me) {
+    // Standalone clients (e.g. Tauri) point themselves at a LAN server; an
+    // unreachable server means "pick one". The served-by-server web build can
+    // only mean the server is actually down, so it keeps the plain message.
+    if (isStandalone()) return <ServerPicker onDone={refresh} />;
     return <div className="min-h-screen grid place-items-center bg-paper text-sm text-brick-deep">server unreachable</div>;
   }
   // Gate everything (incl. /pair?code) behind auth; the URL is preserved, so
@@ -36,6 +42,18 @@ export function App() {
           )}
         </div>
         <div className="flex items-center gap-3">
+          {isStandalone() && getStoredServerUrl() && (
+            <button
+              className="text-sm text-ink-soft hover:text-brick-deep transition"
+              title="Connect to a different server"
+              onClick={() => {
+                clearServerUrl();
+                refresh();
+              }}
+            >
+              {getStoredServerUrl()?.replace(/^https?:\/\//, "")}
+            </button>
+          )}
           {me.email && <span className="text-sm text-ink-soft">{me.email}</span>}
           <Button
             variant="ghost"
