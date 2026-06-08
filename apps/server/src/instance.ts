@@ -1,4 +1,5 @@
 import { randomBytes, randomUUID } from "node:crypto";
+import { defaultDashboardLayout } from "@quietdash/shared";
 import { eq } from "drizzle-orm";
 import { config } from "./config.js";
 import { db } from "./db/index.js";
@@ -39,7 +40,9 @@ export function ensureInstance(): void {
     }
     const hasDashboard = db.select().from(dashboards).where(eq(dashboards.ownerId, owner.id)).limit(1).get();
     if (!hasDashboard) {
-      db.insert(dashboards).values({ id: randomUUID(), ownerId: owner.id, name: "Clock", layout: {} }).run();
+      db.insert(dashboards)
+        .values({ id: randomUUID(), ownerId: owner.id, name: "Clock", layout: defaultDashboardLayout() })
+        .run();
     }
   }
 }
@@ -72,7 +75,9 @@ export function getUserById(id: string) {
 export function createAccount(email: string, passwordHash: string) {
   const id = randomUUID();
   db.insert(users).values({ id, email, passwordHash }).run();
-  db.insert(dashboards).values({ id: randomUUID(), ownerId: id, name: "Clock", layout: {} }).run();
+  db.insert(dashboards)
+    .values({ id: randomUUID(), ownerId: id, name: "Clock", layout: defaultDashboardLayout() })
+    .run();
   return db.select().from(users).where(eq(users.id, id)).get()!;
 }
 
