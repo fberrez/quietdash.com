@@ -8,7 +8,7 @@ Each entry: the decision, the reasoning, and what it rules out.
 The old `quietdash` monorepo (api/web/raspberry-pi) was the validation prototype. We do not
 port it. We design the connectivity and the dashboard fresh. The prototype is reference only.
 
-## D2. Local by construction (positioning, see PRODUCT.md)
+## D2. Local by construction (positioning)
 
 The architecture must let the end user self-host the whole thing and connect their own
 hardware, with the Pi able to be the server itself. This is the moat, not a feature flag.
@@ -53,8 +53,8 @@ trivially in Docker and on a Pi. Critically, the same satori runs in the browser
 studio preview, so preview and device output are guaranteed identical. Rules out node-canvas
 (painful native deps) and headless-browser rendering (too heavy for a Pi).
 
-The renderer must be graphically good, not merely functional. It is a marketing pillar
-(pillar 2 in PRODUCT.md), not a technical detail.
+The renderer must be graphically good, not merely functional. It is a brand pillar, not a
+technical detail.
 
 ## D9. Connectors live server-side, bring-your-own-key
 
@@ -65,22 +65,18 @@ rate-limiting are server-side. Rules out the device talking to external APIs dir
 ## D10. Hardware target and enclosure
 
 Panel: Waveshare 7.5" V2, 800x480, 1-bit black and white. We stay black and white on
-purpose (the dithered 1-bit render is the brand, see PRODUCT.md pillar 2). We do not move to
-the nicer ready-made color wooden frames on the market.
+purpose (the dithered 1-bit render is the brand). We do not move to the nicer ready-made
+color wooden frames on the market.
 
 Compute: Raspberry Pi Zero 2 W is the floor (quad-core), because the Pi can also be the local
 server (D3). A Pi Zero 1 is too weak for Node + SQLite + satori. If the device is only a thin
 display client (server elsewhere), a Zero 2 W is comfortable.
 
 Enclosure: there is no good retail wooden frame for the 7.5" black and white panel (the nice
-ones are color). So we make our own, sourced in France (also reinforces the EU-made signal).
-Two phases:
-- Phase 1, prototype: laser-cut birch plywood, stacked layers gluing into a cavity for the
-  Pi. Cheap, fast iteration via online services (a workshop, a workshop).
-- Phase 2, finished small series: 3D CNC or a cabinetmaker (ebeniste) for solid wood and
-  finish, once the geometry is locked. Quote prototype plus 10 to 25 units.
-
-The brief to send to workshops lives in `hardware/enclosure-brief.md`.
+ones are color), so we make our own. Two phases: a laser-cut birch plywood prototype (stacked
+layers gluing into a cavity for the electronics), then a finished small series in solid wood
+once the geometry is locked. Sourcing, supplier contacts, and the detailed enclosure brief are
+kept in the private repo.
 
 ## D11. Tenant-ready schema, single-user runtime, auth-mode flag
 
@@ -116,7 +112,7 @@ docker-compose.yml
 
 ## First milestone
 
-The local loop, end to end, on the existing Pi (raspberrypi.local), with one dummy widget (the
+The local loop, end to end, on the existing Pi on the LAN, with one dummy widget (the
 clock): server in Docker -> render 1-bit -> the Pi pulls -> it shows on the panel. Once that
 loop is alive, real widgets, the layout editor, connectors, and proper pairing graft onto it
 without re-litigating the architecture.
@@ -125,6 +121,5 @@ without re-litigating the architecture.
 `packages/render` (satori -> resvg -> Atkinson dither -> 1-bit clock PNG) ->
 `apps/server` (Hono + Drizzle/SQLite, `GET /api/device/image` with token auth, stamps
 `lastSeenAt`) -> `device/` Python client pulls and displays (file-save fallback off-Pi).
-Studio shell stands up. Remaining for the milestone: run on the real panel at
-raspberrypi.local, and the server-in-Docker path. Pairing (QR/WiFi) is Phase 1/2, tracked in
-issue #1.
+Studio shell stands up. Remaining for the milestone: run on the real panel on the LAN, and
+the server-in-Docker path. Pairing (QR/WiFi) is Phase 1/2, tracked in issue #1.

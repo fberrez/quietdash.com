@@ -32,7 +32,7 @@ Only one process can drive the e-ink panel at a time, so stop the existing one:
 
 ```bash
 ssh pi@raspberrypi.local
-sudo systemctl stop eink-service     # whatever currently runs display.py
+sudo systemctl stop <existing-eink-service>   # whatever currently drives the panel
 cd ~/quietdash-device
 chmod +x run-on-pi.sh
 ./run-on-pi.sh http://<MAC_IP>:3000

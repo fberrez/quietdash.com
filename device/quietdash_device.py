@@ -122,9 +122,8 @@ class FileBackend:
 #   - SLEEPING the panel between refreshes makes the *next* frame ghost (the
 #     controller loses its old-frame reference, so display() can't cancel the
 #     previous image).
-# A single full refresh reaches deep black AND clears the old frame (matches
-# display.py's push_full). The cost is a brief black/white flash each update;
-# raise QUIETDASH_REFRESH_SECONDS to flash less often.
+# A single full refresh reaches deep black AND clears the old frame. The cost is a
+# brief black/white flash each update; raise QUIETDASH_REFRESH_SECONDS to flash less often.
 
 
 class WaveshareBackend:

@@ -5,10 +5,9 @@ Local-by-construction e-ink dashboard. A Node/TypeScript server renders 800×480
 display them. One architecture covers both the all-in-one Pi and the
 separate-server topologies.
 
-The canonical context for this repo — read both before making architectural calls:
+The canonical context for this repo — read it before making architectural calls:
 
 @DECISIONS.md
-@PRODUCT.md
 
 ## Working notes
 
