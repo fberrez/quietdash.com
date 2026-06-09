@@ -27,8 +27,17 @@ from urllib.parse import parse_qs
 GATEWAY = "10.42.0.1"  # NetworkManager's default shared-mode gateway
 PORTAL_PORT = 80
 # All-in-one Pis often already serve :80 (e.g. Pi-hole). Fall back so the portal
-# still comes up; the panel then shows the explicit URL to open by hand.
+# still comes up; an iptables REDIRECT (wlan0 :80 -> this) keeps the OS popup +
+# the quietdash.local link working even when the portal listens on the fallback.
 PORTAL_FALLBACK_PORT = 8080
+# Captive DNS listens here; iptables redirects wlan0 :53 -> this so it coexists
+# with a system resolver (Pi-hole) that already owns :53 on the box. NOT 5353:
+# that's mDNS, where avahi-daemon is already bound and would race us for the
+# redirected queries.
+DNS_PORT = 5333
+# Friendly name for the setup portal during onboarding (resolved by our captive
+# DNS, NOT mDNS — distinct from the steady-state server's mDNS quietdash.local).
+PORTAL_HOSTNAME = "quietdash.local"
 HOTSPOT_CON = "QuietDash-AP"  # the NM connection profile name we create for the AP
 # Setup AP password. Empty => an OPEN AP (no password) — fine under hostapd, which
 # (unlike NetworkManager's wpa_supplicant AP) handles open APs on brcmfmac. Set a
@@ -125,6 +134,8 @@ class NmWifi:
 
     _ap_ssid: str | None = None  # remembered so connect() can restart the AP on retry
     _hostapd: subprocess.Popen | None = None  # the running hostapd process
+    _portal_port: int = PORTAL_PORT  # remembered for nat install/teardown across retries
+    _dns_port: int = DNS_PORT
 
     @staticmethod
     def _cmd(*args: str, timeout: int = 20) -> subprocess.CompletedProcess:
@@ -133,13 +144,48 @@ class NmWifi:
     def set_managed(self, managed: bool) -> None:
         self._run("device", "set", "wlan0", "managed", "yes" if managed else "no")
 
-    def start_hotspot(self, ssid: str, password: str = AP_PASSWORD) -> bool:
+    # --- captive redirects (zero-tap) -------------------------------------
+    # Redirect the AP clients' DNS (:53) to our captive responder and, when the
+    # portal had to fall back off :80, their HTTP (:80) to the portal port. Both
+    # are scoped to -i wlan0 PREROUTING so they only touch traffic ARRIVING on the
+    # setup AP; they MUST be removed when the AP stops, or a leftover :53 rule would
+    # hijack DNS for LAN clients once wlan0 rejoins the home network as a client.
+    def _nat_specs(self) -> list[list[str]]:
+        specs = [["-i", "wlan0", "-p", "udp", "--dport", "53", "-j", "REDIRECT", "--to-ports", str(self._dns_port)]]
+        if self._portal_port != PORTAL_PORT:
+            specs.insert(0, ["-i", "wlan0", "-p", "tcp", "--dport", "80", "-j", "REDIRECT", "--to-ports", str(self._portal_port)])
+        return specs
+
+    def _install_captive_nat(self) -> None:
+        # Insert at the TOP of PREROUTING, ahead of any Docker/Pi-hole DNAT jump
+        # (e.g. `-A PREROUTING ... -j DOCKER`): on an all-in-one box that publishes
+        # :53/:80, an appended rule would never fire — Docker's DNAT would grab the
+        # AP client's probe first and serve Pi-hole instead of our portal. The rule
+        # is -i wlan0 scoped, so jumping the queue only affects setup-AP traffic.
+        for spec in self._nat_specs():
+            self._cmd("iptables", "-t", "nat", "-D", "PREROUTING", *spec)  # drop a stale dup first (idempotent)
+            self._cmd("iptables", "-t", "nat", "-I", "PREROUTING", "1", *spec)
+
+    def _remove_captive_nat(self) -> None:
+        for spec in self._nat_specs():
+            self._cmd("iptables", "-t", "nat", "-D", "PREROUTING", *spec)
+
+    def start_hotspot(
+        self, ssid: str, password: str = AP_PASSWORD, portal_port: int | None = None, dns_port: int | None = None
+    ) -> bool:
         """Run the setup AP via hostapd. NetworkManager/wpa_supplicant AP mode on
         the Pi's brcmfmac chip activates but won't accept client associations, so
         we take wlan0 away from NM, give it a static IP, and let hostapd (which has
         real brcmfmac AP support) beacon. Open AP when `password` is empty, else
-        WPA2. Returns True if hostapd comes up and stays up."""
+        WPA2. Returns True if hostapd comes up and stays up.
+
+        portal_port/dns_port set the captive REDIRECT targets; on a retry from
+        connect() they're omitted and the remembered values are reused."""
         self._ap_ssid = ssid
+        if portal_port is not None:
+            self._portal_port = portal_port
+        if dns_port is not None:
+            self._dns_port = dns_port
         # Kill any orphaned AP from a previous run (a pkill'd device leaves its
         # hostapd child holding wlan0, which makes the next hostapd fail with
         # "Unable to setup interface").
@@ -194,6 +240,9 @@ class NmWifi:
         # (udp/67) and the portal (tcp/8080) from AP clients. Allow everything on
         # the AP interface; removed again in stop_hotspot.
         self._cmd("iptables", "-I", "INPUT", "1", "-i", "wlan0", "-j", "ACCEPT")
+        # Send AP clients' DNS (and HTTP, if the portal fell off :80) to us, so the
+        # OS captive-portal probe resolves and the connect page auto-opens.
+        self._install_captive_nat()
         return True
 
     def stop_hotspot(self) -> None:
@@ -204,6 +253,7 @@ class NmWifi:
             except subprocess.TimeoutExpired:
                 self._hostapd.kill()
         self._hostapd = None
+        self._remove_captive_nat()  # critical: drop the wlan0 :53/:80 redirects
         self._cmd("iptables", "-D", "INPUT", "-i", "wlan0", "-j", "ACCEPT")  # undo AP allow
         self._cmd("ip", "addr", "flush", "dev", "wlan0")
         self.set_managed(True)  # hand wlan0 back to NetworkManager for normal use
@@ -270,8 +320,9 @@ def build_wifi_png(ssid: str, port: int = PORTAL_PORT, password: str = AP_PASSWO
     # In case the QR scan doesn't auto-join, give the SSID (and password if any).
     creds = f"WiFi '{ssid}'" + (f"  password: {password}" if password else "  (open)")
     draw.text((400 - len(creds) * 3, 430), creds, fill=0)
-    url = f"http://{GATEWAY}" if port == PORTAL_PORT else f"http://{GATEWAY}:{port}"
-    hint = f"then open {url}"
+    # The connect page should auto-open (captive DNS); this is the manual fallback.
+    # quietdash.local + the :80 redirect work regardless of the actual portal port.
+    hint = f"page should open, or visit {PORTAL_HOSTNAME}"
     draw.text((400 - len(hint) * 3, 452), hint, fill=0)
 
     buf = io.BytesIO()
@@ -414,6 +465,7 @@ class MiniDHCP:
         pkt += bytes([51, 4]) + struct.pack("!I", 3600)     # lease time
         pkt += bytes([1, 4]) + socket.inet_aton("255.255.255.0")  # subnet mask
         pkt += bytes([3, 4]) + server                       # router = us
+        pkt += bytes([6, 4]) + server                       # DNS = us (so probes hit CaptiveDNS)
         pkt += bytes([255])                                 # end
         return pkt
 
@@ -442,6 +494,10 @@ class DnsmasqDHCP:
                     f"--interface={self.iface}", "--bind-interfaces",
                     "--dhcp-range=10.42.0.50,10.42.0.150,255.255.255.0,12h",
                     f"--dhcp-option=3,{self.gateway}",
+                    # DNS = us, so the client's captive probe resolves to the portal
+                    # (CaptiveDNS via the wlan0 :53 redirect). --port=0 keeps dnsmasq
+                    # itself off :53; it only hands out the option.
+                    f"--dhcp-option=6,{self.gateway}",
                     "--dhcp-authoritative", "--log-dhcp", f"--log-facility={self.LOG}",
                 ],
                 stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT,
@@ -466,6 +522,89 @@ class DnsmasqDHCP:
             except subprocess.TimeoutExpired:
                 self._proc.kill()
         self._proc = None
+
+
+# --------------------------------------------------------------------------- captive DNS
+class CaptiveDNS:
+    """A minimal UDP DNS that answers EVERY A query with the gateway IP. With the
+    DHCP DNS option pointing here, the phone's captive-portal probe (e.g.
+    captive.apple.com, connectivitycheck.gstatic.com) resolves to our portal and
+    the connect page pops up on its own — no typing a URL.
+
+    Binds a high port (no root needed, and no clash with a system :53 like
+    Pi-hole); start_hotspot's iptables REDIRECT sends wlan0 :53 here. AAAA and
+    other types get an empty answer so the client falls back to the A record.
+    Runs in a daemon thread; start()/stop()."""
+
+    def __init__(self, answer_ip: str = GATEWAY, port: int = DNS_PORT):
+        self.answer_ip = answer_ip
+        self.port = port
+        self._stop = threading.Event()
+        self._thread: threading.Thread | None = None
+
+    def start(self) -> None:
+        self._thread = threading.Thread(target=self._serve, daemon=True)
+        self._thread.start()
+
+    def stop(self) -> None:
+        self._stop.set()
+
+    def _serve(self) -> None:
+        sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        try:
+            sock.bind(("0.0.0.0", self.port))
+        except OSError as exc:
+            print(f"[dns] cannot bind :{self.port} ({exc}); captive auto-popup disabled")
+            return
+        sock.settimeout(1.0)
+        print(f"[dns] captive DNS answering * -> {self.answer_ip} on :{self.port}")
+        while not self._stop.is_set():
+            try:
+                data, addr = sock.recvfrom(512)
+            except socket.timeout:
+                continue
+            except OSError:
+                break
+            reply = self._build_reply(data)
+            if reply:
+                try:
+                    sock.sendto(reply, addr)
+                except OSError:
+                    pass
+        sock.close()
+
+    def _build_reply(self, data: bytes) -> bytes | None:
+        if len(data) < 12:
+            return None
+        tid = data[:2]
+        qd = data[12:]  # question section: QNAME labels, then QTYPE(2) QCLASS(2)
+        i = 0
+        while i < len(qd):
+            length = qd[i]
+            if length == 0:
+                i += 1
+                break
+            i += 1 + length
+        if i + 4 > len(qd):
+            return None
+        qtype = qd[i : i + 2]
+        question = qd[: i + 4]
+        flags = b"\x81\x80"  # response, recursion available, no error
+        if qtype == b"\x00\x01":  # A record requested
+            ancount = b"\x00\x01"
+            answer = (
+                b"\xc0\x0c"  # name = pointer to the question's QNAME
+                + b"\x00\x01\x00\x01"  # type A, class IN
+                + struct.pack("!I", 30)  # short TTL
+                + b"\x00\x04"
+                + socket.inet_aton(self.answer_ip)
+            )
+        else:
+            ancount = b"\x00\x00"
+            answer = b""
+        header = tid + flags + b"\x00\x01" + ancount + b"\x00\x00\x00\x00"
+        return header + question + answer
 
 
 # --------------------------------------------------------------------------- captive portal
@@ -576,7 +715,7 @@ def _provision(backend, wifi: NmWifi, prev: str | None) -> None:
     # Paint the panel FIRST so it never sits blank if AP bring-up is slow/fails.
     show_wifi_screen(backend, ssid, port)
 
-    if not wifi.start_hotspot(ssid):
+    if not wifi.start_hotspot(ssid, portal_port=port):
         print("[wifi] AP failed to start; recovering, will retry on the next loop")
         show_wifi_message(backend, "WiFi setup failed - retrying")
         wifi.reconnect(prev)
@@ -589,10 +728,15 @@ def _provision(backend, wifi: NmWifi, prev: str | None) -> None:
         print("[dhcp] falling back to the built-in DHCP server")
         dhcp = MiniDHCP()
         dhcp.start()
-    print(f"[wifi] AP up; captive portal at http://{GATEWAY}:{port}/ (timeout {PORTAL_TIMEOUT:.0f}s)")
+    # Captive DNS makes the connect page auto-open (zero-tap); the wlan0 :53
+    # redirect installed by start_hotspot funnels clients here.
+    dns = CaptiveDNS()
+    dns.start()
+    print(f"[wifi] AP up; captive portal at http://{PORTAL_HOSTNAME}/ (timeout {PORTAL_TIMEOUT:.0f}s)")
     try:
         connected = CaptivePortal(wifi, networks, port).serve_until_connected()
     finally:
+        dns.stop()
         dhcp.stop()
     if connected:
         # connect() already tore down the AP and joined the home network — do NOT

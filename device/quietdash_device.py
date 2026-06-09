@@ -37,6 +37,10 @@ STATE_FILE = Path(os.environ.get("QUIETDASH_STATE_FILE", Path.home() / ".quietda
 REFRESH_SECONDS = int(os.environ.get("QUIETDASH_REFRESH_SECONDS", "300"))
 OUT_FILE = os.environ.get("QUIETDASH_OUT_FILE", "/tmp/quietdash-latest.png")
 DISCOVERY_TIMEOUT = float(os.environ.get("QUIETDASH_DISCOVERY_TIMEOUT", "5"))
+# Port the device serves its own server-picker page on (for the 0/many case).
+SETUP_PORT = int(os.environ.get("QUIETDASH_SETUP_PORT", "8088"))
+# How long the picker page waits for a human before giving up and re-discovering.
+SETUP_TIMEOUT = float(os.environ.get("QUIETDASH_SETUP_TIMEOUT", "180"))
 POLL_INTERVAL = 3
 
 
@@ -68,14 +72,22 @@ def _get_json(url: str) -> dict:
 
 
 # --------------------------------------------------------------------------- discovery
-def discover_server() -> str | None:
+def discover_servers() -> list[str]:
+    """Every QuietDash server seen on the LAN via mDNS, de-duped. An explicit
+    QUIETDASH_SERVER_URL short-circuits to that one. Empty if none found or
+    zeroconf is missing.
+
+    Unlike a first-hit return, we keep listening a short grace period after the
+    first server so the 'more than one server' case is actually detected (needed
+    for the picker) without making the common single-server boot wait the full
+    window."""
     if SERVER_OVERRIDE:
-        return SERVER_OVERRIDE
+        return [SERVER_OVERRIDE]
     try:
         from zeroconf import Zeroconf, ServiceBrowser  # noqa: WPS433
     except Exception:
         print("[device] zeroconf not installed and no QUIETDASH_SERVER_URL; cannot find a server")
-        return None
+        return []
 
     found: list[str] = []
 
@@ -84,7 +96,9 @@ def discover_server() -> str | None:
             info = zc.get_service_info(type_, name)
             if info and info.addresses:
                 addr = socket.inet_ntoa(info.addresses[0])
-                found.append(f"http://{addr}:{info.port}")
+                url = f"http://{addr}:{info.port}"
+                if url not in found:
+                    found.append(url)
 
         def update_service(self, *_):
             pass
@@ -95,14 +109,130 @@ def discover_server() -> str | None:
     zc = Zeroconf()
     ServiceBrowser(zc, "_quietdash._tcp.local.", Listener())
     deadline = time.monotonic() + DISCOVERY_TIMEOUT
-    while time.monotonic() < deadline and not found:
+    settle: float | None = None
+    while time.monotonic() < deadline:
+        if found and settle is None:
+            settle = time.monotonic() + 1.5  # brief grace to catch other servers
+        if settle is not None and time.monotonic() >= settle:
+            break
         time.sleep(0.2)
     zc.close()
     if found:
-        print(f"[device] discovered server {found[0]}")
-        return found[0]
-    print("[device] no QuietDash server found on the network")
-    return None
+        print(f"[device] discovered {len(found)} server(s): {', '.join(found)}")
+    else:
+        print("[device] no QuietDash server found on the network")
+    return found
+
+
+# --------------------------------------------------------------------------- server picker
+def _lan_ip() -> str:
+    """This device's LAN address (for the picker QR). No traffic is sent — a UDP
+    socket 'connect' just selects the right source interface."""
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    try:
+        s.connect(("192.0.2.1", 9))  # TEST-NET-1: routable-looking, never reached
+        return s.getsockname()[0]
+    except Exception:
+        return "127.0.0.1"
+    finally:
+        s.close()
+
+
+def _picker_html(servers: list[str], message: str = "") -> str:
+    options = "".join(f'<option value="{s}">{s}</option>' for s in servers)
+    note = f'<p class="msg">{message}</p>' if message else ""
+    intro = (
+        "Pick which QuietDash server this panel should use."
+        if servers
+        else "No server was found automatically. Enter your server's address."
+    )
+    return f"""<!doctype html><html><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>QuietDash setup</title>
+<style>
+ body{{font-family:system-ui,sans-serif;background:#f6f2ec;color:#2b2622;margin:0;padding:24px;}}
+ .card{{max-width:380px;margin:6vh auto;background:#fdfbf7;border:1px solid #e3ddd3;border-radius:12px;padding:24px;}}
+ h1{{font-size:1.1rem;letter-spacing:.18em;text-transform:uppercase;color:#bd4b2c;margin:0 0 12px;}}
+ p{{font-size:.9rem;}} label{{display:block;font-size:.85rem;margin:14px 0 4px;}}
+ select,input{{width:100%;box-sizing:border-box;padding:10px;border:1px solid #e3ddd3;border-radius:6px;font-size:1rem;}}
+ button{{width:100%;margin-top:18px;padding:11px;background:#bd4b2c;color:#fff;border:0;border-radius:6px;font-size:1rem;}}
+ .msg{{color:#bd4b2c;font-size:.85rem;}}
+</style></head><body><div class="card">
+<h1>QuietDash</h1>{note}<p>{intro}</p>
+<form method="POST" action="/choose">
+ <label>Discovered servers</label>
+ <select name="server" onchange="document.getElementById('m').value=''">{options}<option value="">Other (type below)</option></select>
+ <label>or type the server address</label>
+ <input id="m" name="server_manual" autocomplete="off" placeholder="http://192.168.1.50:3000">
+ <button type="submit">Use this server</button>
+</form></div></body></html>"""
+
+
+def _probe_server(url: str) -> bool:
+    """Cheap reachability check so the picker rejects a typo before we persist it."""
+    try:
+        _get_json(f"{url}/api/health")
+        return True
+    except Exception:
+        return False
+
+
+def choose_server(backend, servers: list[str]) -> str | None:
+    """Resolve which server to pair with.
+
+    - exactly one (or a QUIETDASH_SERVER_URL override): use it, no UI.
+    - zero or many: serve a tiny page on this device, show a QR to it on the
+      panel, and let the human pick/enter the server. Returns the chosen URL, or
+      None on timeout (the main loop then re-discovers).
+    """
+    if len(servers) == 1:
+        return servers[0]
+
+    from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer  # noqa: WPS433
+    from urllib.parse import parse_qs  # noqa: WPS433
+
+    url = f"http://{_lan_ip()}:{SETUP_PORT}/"
+    show_setup_screen(backend, url, servers)
+    chosen: dict[str, str] = {}
+
+    class Handler(BaseHTTPRequestHandler):
+        def log_message(self, *_):
+            pass
+
+        def _send(self, code: int, body: str) -> None:
+            data = body.encode()
+            self.send_response(code)
+            self.send_header("content-type", "text/html")
+            self.send_header("content-length", str(len(data)))
+            self.end_headers()
+            self.wfile.write(data)
+
+        def do_GET(self):
+            self._send(200, _picker_html(servers))
+
+        def do_POST(self):
+            length = int(self.headers.get("content-length", "0"))
+            form = parse_qs(self.rfile.read(length).decode())
+            pick = (form.get("server_manual", [""])[0] or form.get("server", [""])[0]).strip().rstrip("/")
+            if pick and not pick.startswith(("http://", "https://")):
+                pick = f"http://{pick}"
+            if not pick:
+                self._send(200, _picker_html(servers, "Pick or type a server address."))
+                return
+            if not _probe_server(pick):
+                self._send(200, _picker_html(servers, f"Couldn't reach {pick}. Check the address."))
+                return
+            chosen["url"] = pick
+            self._send(200, _picker_html([], f"Using {pick}. You can close this page."))
+
+    httpd = ThreadingHTTPServer(("0.0.0.0", SETUP_PORT), Handler)
+    httpd.timeout = 1
+    print(f"[device] {len(servers)} servers; pick one at {url} (QR on the panel, timeout {SETUP_TIMEOUT:.0f}s)")
+    deadline = time.monotonic() + SETUP_TIMEOUT
+    while "url" not in chosen and time.monotonic() < deadline:
+        httpd.handle_request()
+    httpd.server_close()
+    return chosen.get("url")
 
 
 # --------------------------------------------------------------------------- panel
@@ -198,6 +328,50 @@ def show_pairing_screen(backend, server: str, code: str) -> None:
         print(f"[device] PAIR: open {server}/pair?code={code}  (code {code})")
 
 
+def build_setup_png(url: str, servers: list[str]) -> bytes | None:
+    """800x480 server-picker screen: QR to this device's own setup page, plus a
+    short list of the discovered servers (or a 'none found' note)."""
+    try:
+        import qrcode  # noqa: WPS433
+        from PIL import Image, ImageDraw  # noqa: WPS433
+    except Exception:
+        return None
+
+    qr = qrcode.QRCode(box_size=8, border=2)
+    qr.add_data(url)
+    qr.make(fit=True)
+    qr_img = qr.make_image(fill_color="black", back_color="white").convert("1")
+
+    canvas = Image.new("1", (800, 480), 1)
+    canvas.paste(qr_img, ((800 - qr_img.width) // 2, 56))
+    draw = ImageDraw.Draw(canvas)
+    draw.rectangle((1, 1, 798, 478), outline=0)
+    title = "Choose a server" if servers else "Set a server"
+    draw.text((400 - len(title) * 3, 28), title, fill=0)
+    if servers:
+        listing = "found: " + ", ".join(s.split("://")[-1] for s in servers[:3])
+        if len(servers) > 3:
+            listing += f" (+{len(servers) - 3} more)"
+    else:
+        listing = "no server found automatically"
+    draw.text((400 - len(listing) * 3, 430), listing, fill=0)
+    hint = f"scan, or open {url.split('://')[-1]}"
+    draw.text((400 - len(hint) * 3, 452), hint, fill=0)
+
+    buf = io.BytesIO()
+    canvas.save(buf, format="PNG")
+    return buf.getvalue()
+
+
+def show_setup_screen(backend, url: str, servers: list[str]) -> None:
+    png = build_setup_png(url, servers)
+    if png:
+        backend.show(png)
+        print(f"[device] showing server-picker QR -> {url}")
+    else:
+        print(f"[device] SETUP: open {url} to pick a server ({len(servers)} found)")
+
+
 # --------------------------------------------------------------------------- flow
 def pair(server: str, device_id: str, backend) -> str | None:
     """Init pairing, show the QR, poll until approved. Returns a token or None."""
@@ -271,7 +445,7 @@ def main() -> int:
                     save_state(state)
                 continue
 
-            server = discover_server()
+            server = choose_server(backend, discover_servers())
             if not server:
                 time.sleep(POLL_INTERVAL)
                 continue

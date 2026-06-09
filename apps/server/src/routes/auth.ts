@@ -1,5 +1,7 @@
+import { getConnInfo } from "@hono/node-server/conninfo";
 import { loginRequest, registerRequest, setupRequest } from "@quietdash/shared";
 import { eq } from "drizzle-orm";
+import type { Context } from "hono";
 import { Hono } from "hono";
 import { hashPassword, verifyPassword } from "../auth/password.js";
 import { clearSession, currentUserId, setSession } from "../auth/session.js";
@@ -12,8 +14,14 @@ import {
   getUserByEmail,
   getUserById,
 } from "../instance.js";
+import { rateLimit } from "../ratelimit.js";
 
 export const authRoutes = new Hono();
+
+/** Per-IP brute-force guard for the credential endpoints (mirrors pair/init). */
+function clientIp(c: Context): string {
+  return getConnInfo(c).remote.address ?? "unknown";
+}
 
 /** State the studio needs to decide register / setup / login / app. */
 authRoutes.get("/me", async (c) => {
@@ -34,6 +42,9 @@ authRoutes.get("/me", async (c) => {
 /** First-run single-password setup. Only valid in single-password mode. */
 authRoutes.post("/setup", async (c) => {
   if (getInstanceSettings().authMode !== "single-password") return c.json({ error: "not available" }, 404);
+  if (!rateLimit(`auth-setup:${clientIp(c)}`, 5, 60_000)) {
+    return c.json({ error: "too many attempts, slow down" }, 429);
+  }
   const owner = getOwner();
   if (owner.passwordHash) return c.json({ error: "already set up" }, 409);
   const parsed = setupRequest.safeParse(await c.req.json().catch(() => null));
@@ -47,6 +58,9 @@ authRoutes.post("/setup", async (c) => {
 /** Create a cloud account. Only valid in multi-user mode. */
 authRoutes.post("/register", async (c) => {
   if (getInstanceSettings().authMode !== "multi-user") return c.json({ error: "not available" }, 404);
+  if (!rateLimit(`auth-register:${clientIp(c)}`, 5, 60_000)) {
+    return c.json({ error: "too many attempts, slow down" }, 429);
+  }
   const parsed = registerRequest.safeParse(await c.req.json().catch(() => null));
   if (!parsed.success) return c.json({ error: "valid email and 8+ char password required" }, 400);
   if (getUserByEmail(parsed.data.email)) return c.json({ error: "email already registered" }, 409);
@@ -57,6 +71,9 @@ authRoutes.post("/register", async (c) => {
 });
 
 authRoutes.post("/login", async (c) => {
+  if (!rateLimit(`auth-login:${clientIp(c)}`, 10, 60_000)) {
+    return c.json({ error: "too many attempts, slow down" }, 429);
+  }
   const parsed = loginRequest.safeParse(await c.req.json().catch(() => null));
   if (!parsed.success) return c.json({ error: "invalid request" }, 400);
 
